@@ -3,7 +3,7 @@ import { botAtiendeLead, leadEnEtapaBot, normalizarOrigen, notaInterna, elegir, 
 import { enviarWhatsApp } from '../_shared/builderbot.ts'
 import { destinoWhatsApp } from '../_shared/lid.ts'
 import { type Lead, type Cuerpo, type Respuesta, type ResultadoProcesar, supabase, MODO, ErrorApi, telefonoDe, buscarLead, registrarEvento, telefonosAsesores, fechaYHorario, FERIADOS, guardarEnChat } from './comun.ts'
-import { type TipoAviso, notificarAsesor, avisarMensajeNuevo, avisarFueraDeHorario } from './avisos.ts'
+import { type TipoAviso, notificarAsesor, avisarMensajeNuevo, avisarFueraDeHorario, abrirVentanaAsesor } from './avisos.ts'
 import { contextoSinRegistrar, leadRegistrado, contextoDelAlumno } from './contexto.ts'
 
 // Runtime de Supabase Edge Functions: mantiene viva una tarea después de responder
@@ -67,7 +67,9 @@ export async function registrar(cuerpo: Cuerpo): Promise<Respuesta> {
   const telefono = telefonoDe(cuerpo)
   const mensaje = valorResuelto(cuerpo.mensaje)
   // La respuesta automática del WhatsApp de un asesor a un aviso del CRM no es un lead
+  // De paso abre su ventana de 24 h de WhatsApp y recibe los avisos pendientes
   if (telefono && (await telefonosAsesores()).has(telefono)) {
+    EdgeRuntime.waitUntil(abrirVentanaAsesor(telefono, mensaje ?? undefined))
     return { ok: true, ignorado: 'mensaje de un asesor', bot_atiende: false }
   }
   const { data, error } = await supabase.rpc('registrar_lead', {

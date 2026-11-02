@@ -4,7 +4,7 @@ import { enviarWhatsApp } from '../_shared/builderbot.ts'
 import { destinoWhatsApp } from '../_shared/lid.ts'
 import { enviarPush } from '../_shared/push.ts'
 import { esCaidaWhatsApp } from './conexion.ts'
-import { type Lead, type Cuerpo, type Respuesta, supabase, PANEL_URL, MINUTOS_ENTRE_AVISOS, telefonosAsesores, fechaCorta, oficinaAbierta, guardarEnChat } from './comun.ts'
+import { type Lead, type Cuerpo, type Respuesta, supabase, PANEL_URL, MINUTOS_ENTRE_AVISOS, MS_VENTANA_ASESOR, telefonosAsesores, fechaCorta, oficinaAbierta, guardarEnChat, ventanaAbierta } from './comun.ts'
 
 // Runtime de Supabase Edge Functions: mantiene viva una tarea después de responder
 declare const EdgeRuntime: { waitUntil(promesa: Promise<unknown>): void }
@@ -60,6 +60,8 @@ export async function notificarAsesor(lead: Lead, telefonoAsesor: string, fuente
     cuerpo: `${lead.nombre ?? lead.telefono} · ${lead.modalidad ?? lead.carrera_interes ?? 'Consulta general'}`,
     url: `/chats/${lead.id}`, etiqueta: `lead-${lead.id}`,
   }))
+  // Sin ventana de 24 h el envío fallaría: el aviso queda pendiente y le llega con su próximo "."
+  if (!(await ventanaAbierta(lead.asesor_id))) return false
   let envio = await enviarWhatsApp(telefonoAsesor, texto)
   for (let intento = 1; !envio.ok && intento < 3; intento++) {
     await new Promise((r) => setTimeout(r, intento * 5_000))
@@ -118,6 +120,7 @@ export async function avisarMensajeNuevo(lead: Lead, mensaje: string) {
     titulo: `💬 ${lead.nombre ?? lead.telefono}`,
     cuerpo: mensaje, url: `/chats/${lead.id}`, etiqueta: `chat-${lead.id}`,
   }))
+  if (!(await ventanaAbierta(reemplazo?.telefono ? asesor.ausente_reemplazo : lead.asesor_id))) return
   const envio = await enviarWhatsApp(destino, texto)
   if (!envio.ok) console.error('[genesys] No se pudo avisar el mensaje nuevo al asesor:', envio.error)
 }
@@ -187,6 +190,8 @@ export async function notificarAsignacion(cuerpo: Cuerpo): Promise<Respuesta> {
       }
       continue
     }
+    // Sin ventana de 24 h: quedan pendientes y le llegan con su próximo "."
+    if (!(await ventanaAbierta(asesorId))) continue
     const lista = suyos.slice(0, 15).map((l) => `• ${l.nombre ?? 'Sin nombre'} (${l.telefono})`)
     const texto = [
       `*📌 ${suyos.length} LEADS ASIGNADOS A TI*${asignadoPor ? ` (por ${asignadoPor})` : ''}`,
@@ -217,6 +222,52 @@ export async function notificarAsignacion(cuerpo: Cuerpo): Promise<Respuesta> {
     }
   }
   return { ok: true, avisados, bienvenidas }
+}
+
+/**
+ * El asesor escribió al número de Genesys (basta un "."): se abre su ventana de 24 h y le llegan,
+ * en un solo mensaje, los avisos de leads que quedaron pendientes por no tener ventana.
+ * Solo contesta si tiene pendientes o si mandó un mensaje corto ("."), así la respuesta automática
+ * de su WhatsApp no arma una conversación sin fin con el bot.
+ */
+export async function abrirVentanaAsesor(telefono: string, mensaje: string | undefined) {
+  const ahora = new Date()
+  const { data: asesores } = await supabase.from('asesores').update({ ventana_whatsapp_at: ahora.toISOString() })
+    .eq('telefono', telefono).is('eliminado_at', null).select('id')
+  const asesorId = asesores?.[0]?.id
+  if (!asesorId) return
+  const { data: pendientes } = await supabase.from('leads').select('id, nombre, telefono, modalidad, carrera_interes')
+    .eq('asesor_id', asesorId)
+    .in('notificacion_estado', ['pendiente', 'error', 'fuera_horario'])
+    .is('eliminado_at', null)
+    .is('primer_contacto_asesor_at', null)
+    .gte('fecha_asignado', new Date(ahora.getTime() - 7 * 24 * 3600_000).toISOString())
+    .order('fecha_asignado', { ascending: false })
+  const suyos = pendientes ?? []
+  if (!suyos.length && (mensaje ?? '').trim().length > 3) return
+
+  const hasta = fechaCorta(new Date(ahora.getTime() + MS_VENTANA_ASESOR).toISOString())
+  const lista = suyos.slice(0, 15).flatMap((l) => [
+    `• *${l.nombre ?? l.telefono}* – ${l.modalidad ?? l.carrera_interes ?? 'Consulta general'}`,
+    `  ${PANEL_URL}/chats/${l.id}`,
+  ])
+  const texto = (suyos.length
+    ? [
+      `*📌 ${suyos.length === 1 ? 'TIENES 1 LEAD ASIGNADO' : `TIENES ${suyos.length} LEADS ASIGNADOS`}*`,
+      '',
+      ...lista,
+      suyos.length > 15 ? `…y ${suyos.length - 15} más en ${PANEL_URL}/pendientes` : null,
+      '',
+    ]
+    : ['✅ Listo, no tienes avisos pendientes', ''])
+    .concat([`Te aviso de tus leads nuevos hasta el ${hasta}`, 'Después mándame otro punto para seguir recibiendo avisos'])
+    .filter((linea) => linea !== null).join('\n')
+
+  const envio = await enviarWhatsApp(telefono, texto)
+  for (const lead of suyos) {
+    await supabase.rpc('marcar_notificacion', { p_lead_id: lead.id, p_ok: envio.ok, p_error: envio.error, p_contar: envio.ok || !esCaidaWhatsApp(envio.error) })
+  }
+  if (!envio.ok) console.error('[genesys] No se pudo responder al punto del asesor:', envio.error)
 }
 
 /**

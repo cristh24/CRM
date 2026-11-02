@@ -41,6 +41,19 @@ export const PANEL_URL = (Deno.env.get('PANEL_URL') ?? 'https://crm-admision.ver
 // Aviso de mensaje nuevo al asesor: como máximo uno cada 10 minutos por lead
 export const MINUTOS_ENTRE_AVISOS = 10
 
+// El número de Genesys solo puede escribir a quien le escribió en las últimas 24 h: el asesor manda un "."
+// y recibe avisos hasta 24 h después (con 10 min de margen). Secreto VENTANA_ASESOR=no para avisar siempre.
+export const USAR_VENTANA_ASESOR = Deno.env.get('VENTANA_ASESOR') !== 'no'
+export const MS_VENTANA_ASESOR = 24 * 3600_000 - 10 * 60_000
+
+/** ¿Se le puede escribir hoy por WhatsApp al asesor? (escribió al número de Genesys hace menos de 24 h) */
+export async function ventanaAbierta(asesorId: string | null): Promise<boolean> {
+  if (!USAR_VENTANA_ASESOR) return true
+  if (!asesorId) return false
+  const { data } = await supabase.from('asesores').select('ventana_whatsapp_at').eq('id', asesorId).maybeSingle()
+  return !!data?.ventana_whatsapp_at && Date.now() - Date.parse(data.ventana_whatsapp_at) < MS_VENTANA_ASESOR
+}
+
 export function responder(datos: Respuesta, status = 200): Response {
   return new Response(JSON.stringify(datos), {
     status,
