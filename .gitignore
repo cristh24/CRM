@@ -32,3 +32,6 @@ panel/playwright-report/
 # Archivos que genera `next dev` para asistentes de IA
 panel/AGENTS.md
 panel/CLAUDE.md
+
+.vercel
+.env*
