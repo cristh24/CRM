@@ -61,7 +61,10 @@ export async function notificarAsesor(lead: Lead, telefonoAsesor: string, fuente
     url: `/chats/${lead.id}`, etiqueta: `lead-${lead.id}`,
   }))
   // Sin ventana de 24 h el envío fallaría: el aviso queda pendiente y le llega con su próximo "."
-  if (!(await ventanaAbierta(lead.asesor_id))) return false
+  if (!(await ventanaAbierta(lead.asesor_id))) {
+    await supabase.from('leads').update({ notificacion_estado: 'pendiente' }).eq('id', lead.id).neq('notificacion_estado', 'notificado')
+    return false
+  }
   let envio = await enviarWhatsApp(telefonoAsesor, texto)
   for (let intento = 1; !envio.ok && intento < 3; intento++) {
     await new Promise((r) => setTimeout(r, intento * 5_000))
@@ -191,7 +194,10 @@ export async function notificarAsignacion(cuerpo: Cuerpo): Promise<Respuesta> {
       continue
     }
     // Sin ventana de 24 h: quedan pendientes y le llegan con su próximo "."
-    if (!(await ventanaAbierta(asesorId))) continue
+    if (!(await ventanaAbierta(asesorId))) {
+      await supabase.from('leads').update({ notificacion_estado: 'pendiente' }).in('id', suyos.map((l) => l.id))
+      continue
+    }
     const lista = suyos.slice(0, 15).map((l) => `• ${l.nombre ?? 'Sin nombre'} (${l.telefono})`)
     const texto = [
       `*📌 ${suyos.length} LEADS ASIGNADOS A TI*${asignadoPor ? ` (por ${asignadoPor})` : ''}`,
@@ -236,6 +242,14 @@ export async function abrirVentanaAsesor(telefono: string, mensaje: string | und
     .eq('telefono', telefono).is('eliminado_at', null).select('id')
   const asesorId = asesores?.[0]?.id
   if (!asesorId) return
+  // Fichas registradas a mano que esperan el resumen agrupado (avisos_pendientes): van en este mismo mensaje
+  const { data: cola } = await supabase.from('avisos_pendientes').select('lead_id, lead:leads!inner(asesor_id)')
+    .eq('lead.asesor_id', asesorId)
+  const enCola = (cola ?? []).map((c) => c.lead_id)
+  if (enCola.length) {
+    await supabase.from('leads').update({ notificacion_estado: 'pendiente' }).in('id', enCola).neq('notificacion_estado', 'notificado')
+    await supabase.from('avisos_pendientes').delete().in('lead_id', enCola)
+  }
   const { data: pendientes } = await supabase.from('leads').select('id, nombre, telefono, modalidad, carrera_interes')
     .eq('asesor_id', asesorId)
     .in('notificacion_estado', ['pendiente', 'error', 'fuera_horario'])
