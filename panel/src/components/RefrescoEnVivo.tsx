@@ -5,8 +5,9 @@
 // Cada actualización vuelve a armar la página en el servidor (procesador de Vercel: el plan gratis se pausó
 // el 30/10 por esto), así que se cuida cuándo:
 //   - con la pestaña oculta no se actualiza: queda pendiente y se hace al volver a ella;
-//   - en las listas que se atienden en vivo (leads, chats, pendientes, kanban) a lo más cada 10 s;
-//     en las demás páginas (dashboard, reportes…) a lo más cada 2 min;
+//   - tampoco si nadie la usa hace 10 min (PC con el CRM abierto todo el día): se actualiza al volver a usarla;
+//   - en las listas que se atienden en vivo (leads, chats, pendientes, kanban) a lo más cada 30 s;
+//     en las demás páginas (dashboard, reportes…) a lo más cada 5 min;
 //   - si la conexión se corta se reconecta sola y al reconectarse actualiza una vez (por si algo se perdió);
 //     al volver a la pestaña tras más de 5 min también.
 import { useEffect, useRef } from 'react'
@@ -15,9 +16,11 @@ import { crearClienteNavegador, prepararTiempoReal } from '@/lib/supabase/client
 
 const TIPOS_QUE_ACTUALIZAN = new Set(['mensaje_lead', 'mensaje_asesor', 'sistema', 'cambio_estado'])
 const RUTAS_EN_VIVO = ['/leads', '/chats', '/pendientes', '/kanban']
-const ESPERA_EN_VIVO = 10_000
-const ESPERA_OTRAS = 120_000
+const ESPERA_EN_VIVO = 30_000
+const ESPERA_OTRAS = 5 * 60_000
 const VOLVER_TRAS = 5 * 60_000
+const INACTIVA_TRAS = 10 * 60_000
+const USO = ['pointerdown', 'pointermove', 'keydown', 'wheel', 'touchstart'] as const
 
 export function RefrescoEnVivo() {
   const router = useRouter()
@@ -36,19 +39,21 @@ export function RefrescoEnVivo() {
     let conectadoAntes = false
     let pendiente = false
     let ultimo = Date.now()
+    let usada = Date.now()
 
     const visible = () => document.visibilityState === 'visible'
+    const enUso = () => visible() && Date.now() - usada < INACTIVA_TRAS
     const actualizar = () => {
       clearTimeout(refresco)
       refresco = undefined
       if (!activo) return
-      if (!visible()) { pendiente = true; return }
+      if (!enUso()) { pendiente = true; return }
       pendiente = false
       ultimo = Date.now()
       router.refresh()
     }
     const refrescar = () => {
-      if (!visible()) { pendiente = true; return }
+      if (!enUso()) { pendiente = true; return }
       if (refresco) return // ya hay una actualización en camino: junta los eventos
       const enVivo = RUTAS_EN_VIVO.some((r) => rutaActual.current === r || rutaActual.current.startsWith(r + '/'))
       const minimo = enVivo ? ESPERA_EN_VIVO : ESPERA_OTRAS
@@ -89,12 +94,20 @@ export function RefrescoEnVivo() {
       if (visible() && (pendiente || Date.now() - ultimo > VOLVER_TRAS)) actualizar()
     }
     document.addEventListener('visibilitychange', alVolver)
+    // Vuelve a usar una pestaña que estaba inactiva: se pone al día una vez
+    const alUsar = () => {
+      const estabaInactiva = Date.now() - usada >= INACTIVA_TRAS
+      usada = Date.now()
+      if (estabaInactiva && pendiente) actualizar()
+    }
+    USO.forEach((e) => window.addEventListener(e, alUsar, { passive: true }))
 
     return () => {
       activo = false
       clearTimeout(refresco)
       clearTimeout(reintento)
       document.removeEventListener('visibilitychange', alVolver)
+      USO.forEach((e) => window.removeEventListener(e, alUsar))
       if (canal) void supabase.removeChannel(canal)
     }
   }, [router])
