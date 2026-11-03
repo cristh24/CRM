@@ -6,8 +6,11 @@ import type { Database } from '@crm/db'
 // /r/<codigo>: formulario del QR de ferias y colegios (lo llenan los alumnos, sin sesión)
 // /e/<codigo>: enlace o QR por medio (TikTok, flyer…) que abre WhatsApp
 const RUTAS_PUBLICAS = ['/login', '/r/', '/w/', '/e/']
+// Las abren alumnos sin sesión (QR de ferias, enlaces por medio): no se consulta la sesión, menos procesador
+const SIN_SESION = ['/r/', '/w/', '/e/']
 
 export async function actualizarSesion(request: NextRequest) {
+  if (SIN_SESION.some((r) => request.nextUrl.pathname.startsWith(r))) return NextResponse.next({ request })
   let respuesta = NextResponse.next({ request })
 
   const supabase = createServerClient<Database>(

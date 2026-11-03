@@ -26,6 +26,8 @@ export async function cambiarMiClave(_previo: EstadoClave, formData: FormData): 
         : `No se pudo cambiar la contraseña: ${error.message}`,
     }
   }
+  // La sesión lee la marca del token (getClaims): se renueva para que ya no pida cambiar la clave
+  await supabase.auth.refreshSession()
   revalidatePath('/', 'layout')
   return { ok: true }
 }

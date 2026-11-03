@@ -19,10 +19,12 @@ export interface Sesion {
 
 export const obtenerSesion = cache(async (): Promise<Sesion> => {
   const supabase = await crearClienteServidor()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  // getClaims valida el token aquí mismo (claves públicas del proyecto), sin ir al servidor de Auth en cada página
+  const { data } = await supabase.auth.getClaims()
+  const claims = data?.claims
+  if (!claims?.sub) redirect('/login')
 
-  const { data: perfil } = await supabase.from('asesores').select('*').eq('user_id', user.id).maybeSingle()
+  const { data: perfil } = await supabase.from('asesores').select('*').eq('user_id', claims.sub).maybeSingle()
   if (!perfil) redirect('/salir?motivo=sin_perfil')
   if (perfil.eliminado_at) redirect('/salir?motivo=eliminado')
 
@@ -32,13 +34,13 @@ export const obtenerSesion = cache(async (): Promise<Sesion> => {
   const puede = (modulo: Modulo) => permisos.includes(modulo)
 
   return {
-    userId: user.id,
+    userId: claims.sub,
     perfil,
     superadmin: perfil.superadmin,
     permisos,
     puede,
     esAdmin: puede('ver_todos'),
-    debeCambiarClave: user.user_metadata?.debe_cambiar_clave === true,
+    debeCambiarClave: (claims.user_metadata as { debe_cambiar_clave?: unknown } | undefined)?.debe_cambiar_clave === true,
   }
 })
 
