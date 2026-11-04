@@ -52,7 +52,7 @@ export function Ausencia({ asesor, reemplazos, compacto = false }: {
   const terminar = async () => {
     const ok = await confirmar({
       titulo: asesor.ausencia_activa ? '¿Terminar la ausencia ahora?' : '¿Cancelar la ausencia programada?',
-      mensaje: asesor.ausencia_activa ? 'Vuelve a recibir leads como antes y los avisos de sus clientes le llegan otra vez.' : undefined,
+      mensaje: asesor.ausencia_activa ? 'Vuelve a recibir leads nuevos. Los que se repartieron a los demás mientras estuvo ausente se quedan con ellos.' : undefined,
       confirmar: asesor.ausencia_activa ? 'Terminar ausencia' : 'Cancelar ausencia',
       cancelar: 'Volver',
     })
@@ -66,6 +66,7 @@ export function Ausencia({ asesor, reemplazos, compacto = false }: {
         {asesor.ausente_motivo ? ` (${asesor.ausente_motivo})` : ''}: {fecha(asesor.ausente_desde)} → {fecha(asesor.ausente_hasta)}
       </p>
       <p className="mt-0.5 text-xs">{reemplazo ? <>Lo cubre <b>{reemplazo}</b>: ve sus chats y le llegan los avisos.</> : 'Sin reemplazo: los avisos le siguen llegando a él/ella.'}</p>
+      <p className="mt-0.5 text-xs">Los leads nuevos se reparten entre los demás y <b>se quedan con ellos</b>: no vuelven al regresar.</p>
       <button type="button" onClick={terminar} disabled={terminando} className="mt-2 text-xs font-medium underline disabled:opacity-60">
         {terminando ? 'Guardando…' : asesor.ausencia_activa ? 'Terminar ausencia ahora' : 'Cancelar ausencia'}
       </button>
@@ -85,6 +86,10 @@ export function Ausencia({ asesor, reemplazos, compacto = false }: {
           ))}
         </div>
       </fieldset>
+      <p className="text-xs text-slate-500">
+        Mientras dure no recibe leads nuevos: se reparten entre los demás y <b>se quedan con ellos</b> (no vuelven al regresar).
+        Sus leads de antes siguen siendo suyos. Al terminar el tiempo vuelve a recibir leads solo.
+      </p>
       {duracion === 'fechas' && (
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="text-sm text-slate-600">Desde
