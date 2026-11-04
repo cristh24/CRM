@@ -101,9 +101,9 @@ export function Ausencia({ asesor, reemplazos, compacto = false }: {
         </div>
       )}
       <div className="grid gap-3 sm:grid-cols-2">
-        <label className="text-sm text-slate-600">¿Quién te cubre? (recomendado)
+        <label className="text-sm text-slate-600">¿Alguien atiende sus chats de antes? (opcional)
           <select name="reemplazo" defaultValue={asesor.ausente_reemplazo ?? ''} className="campo mt-1">
-            <option value="">Nadie</option>
+            <option value="">No, solo pausar leads nuevos</option>
             {opciones.map((p) => <option key={p.id} value={p.id}>{p.nombre}</option>)}
           </select>
         </label>
