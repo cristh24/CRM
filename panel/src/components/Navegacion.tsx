@@ -101,7 +101,7 @@ export function Navegacion(
                 aria-current={esActivo ? 'page' : undefined}
                 title={compacto ? e.texto : undefined}
                 className={`relative flex items-center gap-3 rounded-lg py-2 text-sm font-medium whitespace-nowrap transition ${compacto ? 'justify-center px-0' : 'px-3'} ${
-                  esActivo ? 'bg-lateral-activo text-lateral-activo-texto shadow-[inset_3px_0_0_var(--color-marca-600)]' : 'text-lateral-texto hover:bg-lateral-hover'
+                  esActivo ? 'bg-lateral-activo text-lateral-activo-texto' : 'text-lateral-texto hover:bg-lateral-hover'
                 }`}
               >
                 <span aria-hidden className={`w-5 text-center text-base ${esActivo ? '' : 'text-lateral-suave'}`}>{e.icono}</span>
