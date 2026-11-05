@@ -23,7 +23,7 @@ export function SelectorTema({ inicial }: { inicial: Tema }) {
   }
 
   return (
-    <div className="flex rounded-full border border-slate-200 bg-slate-100 p-0.5" role="radiogroup" aria-label="Tema">
+    <div className="flex rounded-full border border-(--vidrio-borde) bg-(--vidrio-fondo) p-0.5 shadow-[inset_0_0_0_1px_var(--vidrio-linea)] backdrop-blur-md" role="radiogroup" aria-label="Tema">
       {OPCIONES.map((o) => (
         <button
           key={o.valor} role="radio" aria-checked={tema === o.valor} title={o.texto} onClick={() => elegir(o.valor)}

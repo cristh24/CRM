@@ -80,7 +80,7 @@ export default async function LayoutPanel({ children }: { children: React.ReactN
 
       <div className={`min-w-0 flex-1 overflow-x-clip ${menuCompacto ? 'md:ml-[76px]' : 'md:ml-[270px]'}`}>
         {/* Barra superior: buscador, avisos, tema y usuario */}
-        <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-slate-200 bg-superficie/95 px-3 backdrop-blur md:h-16 md:gap-3 md:px-8">
+        <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-(--vidrio-borde) bg-(--vidrio-fondo) px-3 shadow-[0_8px_24px_-14px_rgba(44,71,105,0.25)] backdrop-blur-xl backdrop-saturate-150 md:top-3 md:mx-4 md:mt-3 md:h-16 md:gap-3 md:rounded-full md:border md:px-6">
           {/* Celular: ☰ con el menú completo, el tema y cerrar sesión */}
           <MenuMovil>
             <div className="mb-5 px-2 pr-10">
