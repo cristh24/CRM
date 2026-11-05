@@ -100,8 +100,8 @@ export function Navegacion(
                 href={e.href}
                 aria-current={esActivo ? 'page' : undefined}
                 title={compacto ? e.texto : undefined}
-                className={`relative flex items-center gap-3 rounded-lg py-2 text-sm font-medium whitespace-nowrap transition ${compacto ? 'justify-center px-0' : 'px-3'} ${
-                  esActivo ? 'bg-lateral-activo text-lateral-activo-texto' : 'text-lateral-texto hover:bg-lateral-hover'
+                className={`relative flex items-center gap-3 rounded-xl py-2 text-sm font-medium whitespace-nowrap transition ${compacto ? 'justify-center px-0' : 'px-3'} ${
+                  esActivo ? 'vidrio-activo bg-lateral-activo text-lateral-activo-texto' : 'text-lateral-texto hover:bg-lateral-hover'
                 }`}
               >
                 <span aria-hidden className={`w-5 text-center text-base ${esActivo ? '' : 'text-lateral-suave'}`}>{e.icono}</span>

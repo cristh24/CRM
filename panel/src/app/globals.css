@@ -44,13 +44,13 @@
 
   /* Superficies y menú lateral (claro, con un degradado azul muy suave) */
   --color-superficie: #ffffff;
-  --color-lateral: #f7f9fc;
+  --color-lateral: rgba(255, 255, 255, 0.5);
   --color-lateral-borde: #e3e9f2;
   --color-lateral-titulo: #1d2939;
   --color-lateral-texto: #3d4b60;
   --color-lateral-suave: #8a97ab;
-  --color-lateral-hover: rgba(74, 116, 168, 0.07);
-  --color-lateral-activo: #dde7f3;
+  --color-lateral-hover: rgba(255, 255, 255, 0.55);
+  --color-lateral-activo: rgba(255, 255, 255, 0.85);
   --color-lateral-activo-texto: #2f5482;
 
   /* Chat estilo WhatsApp */
@@ -77,7 +77,7 @@
   --degradado-lateral:
     radial-gradient(120% 45% at 0% 100%, rgba(74, 116, 168, 0.30) 0%, rgba(74, 116, 168, 0.10) 45%, transparent 75%),
     radial-gradient(90% 25% at 100% 0%, rgba(139, 124, 200, 0.16) 0%, transparent 70%),
-    linear-gradient(180deg, #fbfcfe 0%, #f3f6fb 100%);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.1) 100%);
   --degradado-fondo:
     radial-gradient(55% 60% at 100% 0%, rgba(74, 116, 168, 0.20) 0%, rgba(74, 116, 168, 0.07) 40%, transparent 70%),
     radial-gradient(45% 55% at 100% 100%, rgba(139, 124, 200, 0.16) 0%, rgba(139, 124, 200, 0.05) 45%, transparent 72%),
@@ -106,13 +106,13 @@
   --color-slate-900: #f1f5f9;
 
   --color-superficie: #161b26;
-  --color-lateral: #111827;
+  --color-lateral: rgba(17, 24, 39, 0.55);
   --color-lateral-borde: #1e293b;
   --color-lateral-titulo: #ffffff;
   --color-lateral-texto: #a7b3c6;
   --color-lateral-suave: #6b7a90;
   --color-lateral-hover: rgba(255, 255, 255, 0.05);
-  --color-lateral-activo: rgba(111, 151, 201, 0.18);
+  --color-lateral-activo: rgba(255, 255, 255, 0.1);
   --color-lateral-activo-texto: #a9c4e6;
 
   --color-marca-50: color-mix(in oklab, #6f97c9 16%, transparent);
@@ -137,7 +137,7 @@
   --secuencial-550: #5598e7;
   --secuencial-700: #9ec5f4;
   --rejilla: #243046;
-  --degradado-lateral: radial-gradient(120% 45% at 0% 100%, rgba(111, 151, 201, 0.22) 0%, transparent 75%), linear-gradient(180deg, #0f1522 0%, #111827 100%);
+  --degradado-lateral: radial-gradient(120% 45% at 0% 100%, rgba(111, 151, 201, 0.22) 0%, transparent 75%), linear-gradient(180deg, rgba(15, 21, 34, 0.4) 0%, rgba(17, 24, 39, 0.2) 100%);
   --degradado-fondo: radial-gradient(55% 60% at 100% 0%, rgba(111, 151, 201, 0.14) 0%, transparent 70%), radial-gradient(45% 55% at 100% 100%, rgba(139, 124, 200, 0.10) 0%, transparent 72%), linear-gradient(160deg, #0c111d 0%, #0f1424 100%);
   --degradado-boton: linear-gradient(135deg, #4f78ad 0%, #5a83b8 100%);
 
@@ -246,13 +246,13 @@
     --color-slate-900: #f1f5f9;
 
     --color-superficie: #161b26;
-    --color-lateral: #111827;
+    --color-lateral: rgba(17, 24, 39, 0.55);
   --color-lateral-borde: #1e293b;
   --color-lateral-titulo: #ffffff;
   --color-lateral-texto: #a7b3c6;
   --color-lateral-suave: #6b7a90;
   --color-lateral-hover: rgba(255, 255, 255, 0.05);
-    --color-lateral-activo: rgba(111, 151, 201, 0.18);
+    --color-lateral-activo: rgba(255, 255, 255, 0.1);
   --color-lateral-activo-texto: #a9c4e6;
 
     --color-marca-50: color-mix(in oklab, #6f97c9 16%, transparent);
@@ -277,7 +277,7 @@
     --secuencial-550: #5598e7;
     --secuencial-700: #9ec5f4;
     --rejilla: #243046;
-  --degradado-lateral: radial-gradient(120% 45% at 0% 100%, rgba(111, 151, 201, 0.22) 0%, transparent 75%), linear-gradient(180deg, #0f1522 0%, #111827 100%);
+  --degradado-lateral: radial-gradient(120% 45% at 0% 100%, rgba(111, 151, 201, 0.22) 0%, transparent 75%), linear-gradient(180deg, rgba(15, 21, 34, 0.4) 0%, rgba(17, 24, 39, 0.2) 100%);
   --degradado-fondo: radial-gradient(55% 60% at 100% 0%, rgba(111, 151, 201, 0.14) 0%, transparent 70%), radial-gradient(45% 55% at 100% 100%, rgba(139, 124, 200, 0.10) 0%, transparent 72%), linear-gradient(160deg, #0c111d 0%, #0f1424 100%);
   --degradado-boton: linear-gradient(135deg, #4f78ad 0%, #5a83b8 100%);
 
@@ -375,8 +375,24 @@ body {
   background-attachment: fixed;
 }
 
-/* Menú lateral con degradado (el color de fondo queda de respaldo) */
-.bg-lateral { background-image: var(--degradado-lateral); }
+/* Menú lateral estilo Liquid Glass (iOS 27): vidrio translúcido sobre las manchas de color del fondo,
+   desenfoque y un borde con brillo suave */
+.bg-lateral {
+  background-image: var(--degradado-lateral);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.7), 1px 0 24px rgba(16, 24, 40, 0.04);
+}
+/* Opción activa: "píldora" de vidrio más opaca, con brillo en el borde */
+@utility vidrio-activo {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8), 0 1px 2px rgba(16, 24, 40, 0.06), 0 4px 12px -4px rgba(74, 116, 168, 0.18);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+}
+:root[data-theme="dark"] .bg-lateral { box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.06); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .bg-lateral { box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.06); }
+}
 
 /* Barras de desplazamiento discretas */
 * {
