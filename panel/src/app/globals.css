@@ -9,26 +9,26 @@
    los componentes no cambian, solo los valores.
    ===================================================================== */
 @theme {
-  /* Estilo "Centro de Simulación" UPeU: tipografía Outfit, turquesa profundo #0f6b73, dorado #d9a521, fondo gris verdoso y sombras suaves */
+  /* Estilo suave: tipografía Outfit, azul acero claro #4a74a8, menú y fondo con degradados muy suaves, sombras ligeras */
   --font-sans: var(--font-outfit), ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
   /* Pantallas muy anchas (1800 px): la ficha del lead muestra los detalles abiertos por defecto */
   --breakpoint-3xl: 112.5rem;
 
-  --color-marca-50: #e6f3f3;
-  --color-marca-100: #cde8e9;
-  --color-marca-200: #9fd0d3;
-  --color-marca-600: #0f6b73;
-  --color-marca-700: #0c5960;
-  --color-marca-800: #0a4148;
+  --color-marca-50: #eef3f9;
+  --color-marca-100: #dde7f3;
+  --color-marca-200: #bccfe6;
+  --color-marca-600: #4a74a8;
+  --color-marca-700: #3a5f8c;
+  --color-marca-800: #2c4769;
 
   /* Dorado UPeU (acento) */
-  --color-dorado-50: #fbf3dc;
-  --color-dorado-400: #d9a521;
-  --color-dorado-700: #85600c;
+  --color-dorado-50: #fff6e0;
+  --color-dorado-400: #f7a800;
+  --color-dorado-700: #8a5d00;
 
   /* Grises de TailAdmin */
-  --color-slate-50: #f1f6f7;
-  --color-slate-100: #e9f0f1;
+  --color-slate-50: #f5f7fb;
+  --color-slate-100: #eef1f6;
   --color-slate-200: #e4e7ec;
   --color-slate-300: #d0d5dd;
   --color-slate-400: #98a2b3;
@@ -42,16 +42,16 @@
   --shadow-theme-sm: 0px 1px 3px 0px rgba(16, 24, 40, 0.1), 0px 1px 2px 0px rgba(16, 24, 40, 0.06);
   --shadow-theme-md: 0px 4px 8px -2px rgba(16, 24, 40, 0.1), 0px 2px 4px -2px rgba(16, 24, 40, 0.06);
 
-  /* Superficies y menú lateral (turquesa oscuro, como la cabecera del Centro de Simulación) */
+  /* Superficies y menú lateral (claro, con un degradado azul muy suave) */
   --color-superficie: #ffffff;
-  --color-lateral: #0b4851;
-  --color-lateral-borde: #0e5862;
-  --color-lateral-titulo: #ffffff;
-  --color-lateral-texto: #d4e8ea;
-  --color-lateral-suave: #8dbcc1;
-  --color-lateral-hover: rgba(255, 255, 255, 0.07);
-  --color-lateral-activo: #12808a;
-  --color-lateral-activo-texto: #ffffff;
+  --color-lateral: #f7f9fc;
+  --color-lateral-borde: #e3e9f2;
+  --color-lateral-titulo: #1d2939;
+  --color-lateral-texto: #3d4b60;
+  --color-lateral-suave: #8a97ab;
+  --color-lateral-hover: rgba(74, 116, 168, 0.07);
+  --color-lateral-activo: #dde7f3;
+  --color-lateral-activo-texto: #2f5482;
 
   /* Chat estilo WhatsApp */
   --color-chat-fondo: #efeae2;
@@ -73,9 +73,9 @@
   --secuencial-700: #0d366b;
   --rejilla: #e2e8f0;
   /* Degradados suaves: menú turquesa profundo -> turquesa, fondo menta casi blanco, botón turquesa */
-  --degradado-lateral: linear-gradient(180deg, #0a3f47 0%, #0c4f58 45%, #11707a 100%);
-  --degradado-fondo: linear-gradient(160deg, #eef6f6 0%, #f5f9f9 45%, #fbf8f0 100%);
-  --degradado-boton: linear-gradient(135deg, #0f6b73 0%, #14838c 100%);
+  --degradado-lateral: linear-gradient(180deg, #fbfcfe 0%, #f3f6fb 55%, #e9eff8 100%);
+  --degradado-fondo: linear-gradient(160deg, #f3f6fb 0%, #f7f8fc 50%, #f6f4fa 100%);
+  --degradado-boton: linear-gradient(135deg, #5a85ba 0%, #4a74a8 100%);
 }
 
 /* ---------------------------------------------------------------------
@@ -86,7 +86,7 @@
   color-scheme: dark;
 
   /* Escala de grises invertida: fondos oscuros, texto claro */
-  --color-slate-50: #0b1416;
+  --color-slate-50: #0c111d;
   --color-slate-100: #172134;
   --color-slate-200: #243046;
   --color-slate-300: #34435b;
@@ -97,23 +97,23 @@
   --color-slate-800: #e2e8f0;
   --color-slate-900: #f1f5f9;
 
-  --color-superficie: #14201f;
-  --color-lateral: #0a1d21;
-  --color-lateral-borde: #143036;
+  --color-superficie: #161b26;
+  --color-lateral: #111827;
+  --color-lateral-borde: #1e293b;
   --color-lateral-titulo: #ffffff;
-  --color-lateral-texto: #a9c4c7;
-  --color-lateral-suave: #6e8f93;
+  --color-lateral-texto: #a7b3c6;
+  --color-lateral-suave: #6b7a90;
   --color-lateral-hover: rgba(255, 255, 255, 0.05);
-  --color-lateral-activo: rgba(42, 160, 168, 0.22);
-  --color-lateral-activo-texto: #8fd8dd;
+  --color-lateral-activo: rgba(111, 151, 201, 0.18);
+  --color-lateral-activo-texto: #a9c4e6;
 
-  --color-marca-50: color-mix(in oklab, #2aa0a8 16%, transparent);
-  --color-marca-100: color-mix(in oklab, #2aa0a8 26%, transparent);
-  --color-marca-200: color-mix(in oklab, #2aa0a8 40%, transparent);
-  --color-dorado-50: color-mix(in oklab, #d9a521 14%, transparent);
+  --color-marca-50: color-mix(in oklab, #6f97c9 16%, transparent);
+  --color-marca-100: color-mix(in oklab, #6f97c9 26%, transparent);
+  --color-marca-200: color-mix(in oklab, #6f97c9 40%, transparent);
+  --color-dorado-50: color-mix(in oklab, #f7a800 14%, transparent);
   --color-dorado-700: #f7c04a;
-  --color-marca-600: #1f8c94;
-  --color-marca-700: #8fd8dd;
+  --color-marca-600: #5a83b8;
+  --color-marca-700: #a9c4e6;
 
   --color-chat-fondo: #0d1520;
   --color-burbuja-propia: #134d3a;
@@ -129,9 +129,9 @@
   --secuencial-550: #5598e7;
   --secuencial-700: #9ec5f4;
   --rejilla: #243046;
-  --degradado-lateral: linear-gradient(180deg, #071518 0%, #0a1d21 60%, #0d2a2f 100%);
-  --degradado-fondo: linear-gradient(160deg, #0b1416 0%, #0d1a1c 100%);
-  --degradado-boton: linear-gradient(135deg, #17767e 0%, #1f8c94 100%);
+  --degradado-lateral: linear-gradient(180deg, #0f1522 0%, #111827 60%, #141d2e 100%);
+  --degradado-fondo: linear-gradient(160deg, #0c111d 0%, #0f1424 100%);
+  --degradado-boton: linear-gradient(135deg, #4f78ad 0%, #5a83b8 100%);
 
   /* Insignias y avisos de color: fondos translúcidos y texto más claro */
   /* rose */
@@ -226,7 +226,7 @@
     color-scheme: dark;
 
     /* Escala de grises invertida: fondos oscuros, texto claro */
-    --color-slate-50: #0b1416;
+    --color-slate-50: #0c111d;
     --color-slate-100: #172134;
     --color-slate-200: #243046;
     --color-slate-300: #34435b;
@@ -237,23 +237,23 @@
     --color-slate-800: #e2e8f0;
     --color-slate-900: #f1f5f9;
 
-    --color-superficie: #14201f;
-    --color-lateral: #0a1d21;
-  --color-lateral-borde: #143036;
+    --color-superficie: #161b26;
+    --color-lateral: #111827;
+  --color-lateral-borde: #1e293b;
   --color-lateral-titulo: #ffffff;
-  --color-lateral-texto: #a9c4c7;
-  --color-lateral-suave: #6e8f93;
+  --color-lateral-texto: #a7b3c6;
+  --color-lateral-suave: #6b7a90;
   --color-lateral-hover: rgba(255, 255, 255, 0.05);
-    --color-lateral-activo: rgba(42, 160, 168, 0.22);
-  --color-lateral-activo-texto: #8fd8dd;
+    --color-lateral-activo: rgba(111, 151, 201, 0.18);
+  --color-lateral-activo-texto: #a9c4e6;
 
-    --color-marca-50: color-mix(in oklab, #2aa0a8 16%, transparent);
-    --color-marca-100: color-mix(in oklab, #2aa0a8 26%, transparent);
-    --color-marca-200: color-mix(in oklab, #2aa0a8 40%, transparent);
-    --color-dorado-50: color-mix(in oklab, #d9a521 14%, transparent);
+    --color-marca-50: color-mix(in oklab, #6f97c9 16%, transparent);
+    --color-marca-100: color-mix(in oklab, #6f97c9 26%, transparent);
+    --color-marca-200: color-mix(in oklab, #6f97c9 40%, transparent);
+    --color-dorado-50: color-mix(in oklab, #f7a800 14%, transparent);
     --color-dorado-700: #f7c04a;
-    --color-marca-600: #1f8c94;
-    --color-marca-700: #8fd8dd;
+    --color-marca-600: #5a83b8;
+    --color-marca-700: #a9c4e6;
 
     --color-chat-fondo: #0d1520;
     --color-burbuja-propia: #134d3a;
@@ -269,9 +269,9 @@
     --secuencial-550: #5598e7;
     --secuencial-700: #9ec5f4;
     --rejilla: #243046;
-  --degradado-lateral: linear-gradient(180deg, #071518 0%, #0a1d21 60%, #0d2a2f 100%);
-  --degradado-fondo: linear-gradient(160deg, #0b1416 0%, #0d1a1c 100%);
-  --degradado-boton: linear-gradient(135deg, #17767e 0%, #1f8c94 100%);
+  --degradado-lateral: linear-gradient(180deg, #0f1522 0%, #111827 60%, #141d2e 100%);
+  --degradado-fondo: linear-gradient(160deg, #0c111d 0%, #0f1424 100%);
+  --degradado-boton: linear-gradient(135deg, #4f78ad 0%, #5a83b8 100%);
 
     /* Insignias y avisos de color: fondos translúcidos y texto más claro */
     /* rose */
@@ -384,7 +384,7 @@ body {
 }
 
 @utility boton {
-  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-marca-600 bg-(image:--degradado-boton) px-4 py-2 text-sm font-semibold text-white shadow-[inset_0_-3px_0_var(--color-dorado-400)] transition hover:brightness-110 focus-visible:ring-2 focus-visible:ring-marca-100 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60;
+  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-marca-600 bg-(image:--degradado-boton) px-4 py-2 text-sm font-semibold text-white shadow-theme-xs transition hover:brightness-110 focus-visible:ring-2 focus-visible:ring-marca-100 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60;
 }
 
 @utility boton-secundario {
