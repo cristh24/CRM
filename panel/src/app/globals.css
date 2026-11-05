@@ -73,8 +73,16 @@
   --secuencial-700: #0d366b;
   --rejilla: #e2e8f0;
   /* Degradados suaves: menú turquesa profundo -> turquesa, fondo menta casi blanco, botón turquesa */
-  --degradado-lateral: linear-gradient(180deg, #fbfcfe 0%, #f3f6fb 55%, #e9eff8 100%);
-  --degradado-fondo: linear-gradient(160deg, #f3f6fb 0%, #f7f8fc 50%, #f6f4fa 100%);
+  /* "Salpicón de tinta": manchas de color más fuerte en las esquinas que se desvanecen hacia el centro */
+  --degradado-lateral:
+    radial-gradient(120% 45% at 0% 100%, rgba(74, 116, 168, 0.30) 0%, rgba(74, 116, 168, 0.10) 45%, transparent 75%),
+    radial-gradient(90% 25% at 100% 0%, rgba(139, 124, 200, 0.16) 0%, transparent 70%),
+    linear-gradient(180deg, #fbfcfe 0%, #f3f6fb 100%);
+  --degradado-fondo:
+    radial-gradient(55% 60% at 100% 0%, rgba(74, 116, 168, 0.20) 0%, rgba(74, 116, 168, 0.07) 40%, transparent 70%),
+    radial-gradient(45% 55% at 100% 100%, rgba(139, 124, 200, 0.16) 0%, rgba(139, 124, 200, 0.05) 45%, transparent 72%),
+    radial-gradient(35% 40% at 0% 100%, rgba(90, 160, 200, 0.12) 0%, transparent 70%),
+    linear-gradient(160deg, #f4f7fb 0%, #f8f9fc 100%);
   --degradado-boton: linear-gradient(135deg, #5a85ba 0%, #4a74a8 100%);
 }
 
@@ -129,8 +137,8 @@
   --secuencial-550: #5598e7;
   --secuencial-700: #9ec5f4;
   --rejilla: #243046;
-  --degradado-lateral: linear-gradient(180deg, #0f1522 0%, #111827 60%, #141d2e 100%);
-  --degradado-fondo: linear-gradient(160deg, #0c111d 0%, #0f1424 100%);
+  --degradado-lateral: radial-gradient(120% 45% at 0% 100%, rgba(111, 151, 201, 0.22) 0%, transparent 75%), linear-gradient(180deg, #0f1522 0%, #111827 100%);
+  --degradado-fondo: radial-gradient(55% 60% at 100% 0%, rgba(111, 151, 201, 0.14) 0%, transparent 70%), radial-gradient(45% 55% at 100% 100%, rgba(139, 124, 200, 0.10) 0%, transparent 72%), linear-gradient(160deg, #0c111d 0%, #0f1424 100%);
   --degradado-boton: linear-gradient(135deg, #4f78ad 0%, #5a83b8 100%);
 
   /* Insignias y avisos de color: fondos translúcidos y texto más claro */
@@ -269,8 +277,8 @@
     --secuencial-550: #5598e7;
     --secuencial-700: #9ec5f4;
     --rejilla: #243046;
-  --degradado-lateral: linear-gradient(180deg, #0f1522 0%, #111827 60%, #141d2e 100%);
-  --degradado-fondo: linear-gradient(160deg, #0c111d 0%, #0f1424 100%);
+  --degradado-lateral: radial-gradient(120% 45% at 0% 100%, rgba(111, 151, 201, 0.22) 0%, transparent 75%), linear-gradient(180deg, #0f1522 0%, #111827 100%);
+  --degradado-fondo: radial-gradient(55% 60% at 100% 0%, rgba(111, 151, 201, 0.14) 0%, transparent 70%), radial-gradient(45% 55% at 100% 100%, rgba(139, 124, 200, 0.10) 0%, transparent 72%), linear-gradient(160deg, #0c111d 0%, #0f1424 100%);
   --degradado-boton: linear-gradient(135deg, #4f78ad 0%, #5a83b8 100%);
 
     /* Insignias y avisos de color: fondos translúcidos y texto más claro */
