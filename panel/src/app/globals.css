@@ -84,6 +84,11 @@
     radial-gradient(35% 40% at 0% 100%, rgba(90, 160, 200, 0.12) 0%, transparent 70%),
     linear-gradient(160deg, #f4f7fb 0%, #f8f9fc 100%);
   --degradado-boton: linear-gradient(135deg, #5a85ba 0%, #4a74a8 100%);
+  /* Vidrio (Liquid Glass): fondo semitransparente y borde con brillo */
+  --vidrio-fondo: rgba(255, 255, 255, 0.62);
+  --vidrio-fondo-fuerte: rgba(255, 255, 255, 0.78);
+  --vidrio-borde: rgba(255, 255, 255, 0.85);
+  --vidrio-linea: rgba(16, 24, 40, 0.08);
 }
 
 /* ---------------------------------------------------------------------
@@ -140,6 +145,10 @@
   --degradado-lateral: radial-gradient(120% 45% at 0% 100%, rgba(111, 151, 201, 0.22) 0%, transparent 75%), linear-gradient(180deg, rgba(15, 21, 34, 0.4) 0%, rgba(17, 24, 39, 0.2) 100%);
   --degradado-fondo: radial-gradient(55% 60% at 100% 0%, rgba(111, 151, 201, 0.14) 0%, transparent 70%), radial-gradient(45% 55% at 100% 100%, rgba(139, 124, 200, 0.10) 0%, transparent 72%), linear-gradient(160deg, #0c111d 0%, #0f1424 100%);
   --degradado-boton: linear-gradient(135deg, #4f78ad 0%, #5a83b8 100%);
+  --vidrio-fondo: rgba(22, 27, 38, 0.6);
+  --vidrio-fondo-fuerte: rgba(22, 27, 38, 0.8);
+  --vidrio-borde: rgba(255, 255, 255, 0.08);
+  --vidrio-linea: rgba(255, 255, 255, 0.1);
 
   /* Insignias y avisos de color: fondos translúcidos y texto más claro */
   /* rose */
@@ -280,6 +289,10 @@
   --degradado-lateral: radial-gradient(120% 45% at 0% 100%, rgba(111, 151, 201, 0.22) 0%, transparent 75%), linear-gradient(180deg, rgba(15, 21, 34, 0.4) 0%, rgba(17, 24, 39, 0.2) 100%);
   --degradado-fondo: radial-gradient(55% 60% at 100% 0%, rgba(111, 151, 201, 0.14) 0%, transparent 70%), radial-gradient(45% 55% at 100% 100%, rgba(139, 124, 200, 0.10) 0%, transparent 72%), linear-gradient(160deg, #0c111d 0%, #0f1424 100%);
   --degradado-boton: linear-gradient(135deg, #4f78ad 0%, #5a83b8 100%);
+  --vidrio-fondo: rgba(22, 27, 38, 0.6);
+  --vidrio-fondo-fuerte: rgba(22, 27, 38, 0.8);
+  --vidrio-borde: rgba(255, 255, 255, 0.08);
+  --vidrio-linea: rgba(255, 255, 255, 0.1);
 
     /* Insignias y avisos de color: fondos translúcidos y texto más claro */
     /* rose */
@@ -402,21 +415,21 @@ body {
 
 /* Campos de formulario del panel */
 @utility campo {
-  @apply block w-full rounded-lg border border-slate-300 bg-superficie px-3.5 py-2.5 text-sm text-slate-900 shadow-theme-xs placeholder:text-slate-400 focus:border-marca-600 focus:ring-2 focus:ring-marca-100 focus:outline-none disabled:bg-slate-100;
+  @apply block w-full rounded-xl border border-(--vidrio-linea) bg-(--vidrio-fondo-fuerte) px-3.5 py-2.5 text-sm text-slate-900 shadow-[inset_0_1px_2px_rgba(16,24,40,0.04)] backdrop-blur-md placeholder:text-slate-400 focus:border-marca-600 focus:ring-2 focus:ring-marca-100 focus:outline-none disabled:bg-slate-100;
   /* En pantallas táctiles 16 px: con menos, el iPhone agranda la página al tocar el campo */
   @media (pointer: coarse) { font-size: 16px; }
 }
 
 @utility boton {
-  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-marca-600 bg-(image:--degradado-boton) px-4 py-2 text-sm font-semibold text-white shadow-theme-xs transition hover:brightness-110 focus-visible:ring-2 focus-visible:ring-marca-100 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60;
+  @apply inline-flex items-center justify-center gap-2 rounded-full bg-marca-600/85 bg-(image:--degradado-boton) px-4.5 py-2 text-sm font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_4px_14px_-4px_rgba(74,116,168,0.45)] backdrop-blur-md transition hover:brightness-110 focus-visible:ring-2 focus-visible:ring-marca-100 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60;
 }
 
 @utility boton-secundario {
-  @apply inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 bg-superficie px-4 py-2 text-sm font-medium text-slate-700 shadow-theme-xs transition hover:bg-slate-100 disabled:opacity-60;
+  @apply inline-flex items-center justify-center gap-2 rounded-full border border-(--vidrio-borde) bg-(--vidrio-fondo) px-4.5 py-2 text-sm font-medium text-slate-700 shadow-[0_1px_2px_rgba(16,24,40,0.06),inset_0_0_0_1px_var(--vidrio-linea)] backdrop-blur-md transition hover:bg-(--vidrio-fondo-fuerte) disabled:opacity-60;
 }
 
 @utility tarjeta {
-  @apply rounded-2xl border border-slate-200/80 bg-superficie shadow-theme-sm;
+  @apply rounded-3xl border border-(--vidrio-borde) bg-(--vidrio-fondo) shadow-[0_1px_2px_rgba(16,24,40,0.04),0_8px_24px_-12px_rgba(44,71,105,0.18),inset_0_0_0_1px_var(--vidrio-linea)] backdrop-blur-xl;
 }
 
 /* Tecla de atajo: <kbd> */
