@@ -105,7 +105,7 @@ export default async function LayoutPanel({ children }: { children: React.ReactN
           <div className="min-w-0 flex-1">{!debeCambiarClave && <BotonBuscar />}</div>
           {!debeCambiarClave && <AvisosEscritorio />}
           <div className="hidden md:block"><SelectorTema inicial={temaGuardado} /></div>
-          <div className="ml-1 hidden items-center gap-3 border-l border-slate-200 pl-3 md:flex">
+          <div className="ml-1 hidden items-center gap-3 border-l border-(--vidrio-linea) pl-3 md:flex">
             {avatar}
             <div className="hidden min-w-0 leading-tight lg:block">
               <p className="truncate text-sm font-medium text-lateral-titulo">{perfil.nombre}</p>

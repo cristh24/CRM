@@ -75,7 +75,7 @@ export function AvisosEscritorio() {
       title={activos ? 'Avisos activados: sonido y notificación cuando un lead escribe' : 'Activar avisos de mensajes nuevos'}
       aria-pressed={activos}
       className={`relative flex h-10 w-10 items-center justify-center rounded-full border transition ${
-        activos ? 'border-marca-100 bg-marca-50 text-marca-600' : 'border-slate-200 bg-superficie text-slate-500 hover:bg-slate-100'
+        activos ? 'border-marca-100 bg-marca-50 text-marca-600' : 'border-(--vidrio-borde) bg-(--vidrio-fondo) text-slate-500 shadow-[inset_0_0_0_1px_var(--vidrio-linea)] backdrop-blur-md hover:bg-(--vidrio-fondo-fuerte)'
       }`}
     >
       <span aria-hidden>{activos ? '🔔' : '🔕'}</span>
