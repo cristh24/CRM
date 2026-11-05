@@ -99,10 +99,10 @@
   color-scheme: dark;
 
   /* Escala de grises invertida: fondos oscuros, texto claro */
-  --color-slate-50: #0c111d;
-  --color-slate-100: #172134;
-  --color-slate-200: #243046;
-  --color-slate-300: #34435b;
+  --color-slate-50: #1a2133;
+  --color-slate-100: #28324a;
+  --color-slate-200: #353f59;
+  --color-slate-300: #46526d;
   --color-slate-400: #6f7f96;
   --color-slate-500: #98a6ba;
   --color-slate-600: #b6c1d0;
@@ -110,15 +110,15 @@
   --color-slate-800: #e2e8f0;
   --color-slate-900: #f1f5f9;
 
-  --color-superficie: #161b26;
-  --color-lateral: rgba(17, 24, 39, 0.55);
+  --color-superficie: #252e44;
+  --color-lateral: rgba(30, 38, 58, 0.5);
   --color-lateral-borde: #1e293b;
   --color-lateral-titulo: #ffffff;
   --color-lateral-texto: #a7b3c6;
   --color-lateral-suave: #6b7a90;
   --color-lateral-hover: rgba(255, 255, 255, 0.05);
-  --color-lateral-activo: rgba(255, 255, 255, 0.1);
-  --color-lateral-activo-texto: #a9c4e6;
+  --color-lateral-activo: rgba(255, 255, 255, 0.14);
+  --color-lateral-activo-texto: #ffffff;
 
   --color-marca-50: color-mix(in oklab, #6f97c9 16%, transparent);
   --color-marca-100: color-mix(in oklab, #6f97c9 26%, transparent);
@@ -128,7 +128,7 @@
   --color-marca-600: #5a83b8;
   --color-marca-700: #a9c4e6;
 
-  --color-chat-fondo: #0d1520;
+  --color-chat-fondo: #182033;
   --color-burbuja-propia: #134d3a;
 
   /* Gráficos: mismos tonos, versión para fondo oscuro */
@@ -141,14 +141,14 @@
   --secuencial-400: #256abf;
   --secuencial-550: #5598e7;
   --secuencial-700: #9ec5f4;
-  --rejilla: #243046;
-  --degradado-lateral: radial-gradient(120% 45% at 0% 100%, rgba(111, 151, 201, 0.22) 0%, transparent 75%), linear-gradient(180deg, rgba(15, 21, 34, 0.4) 0%, rgba(17, 24, 39, 0.2) 100%);
-  --degradado-fondo: radial-gradient(55% 60% at 100% 0%, rgba(111, 151, 201, 0.14) 0%, transparent 70%), radial-gradient(45% 55% at 100% 100%, rgba(139, 124, 200, 0.10) 0%, transparent 72%), linear-gradient(160deg, #0c111d 0%, #0f1424 100%);
+  --rejilla: #353f59;
+  --degradado-lateral: radial-gradient(120% 45% at 0% 100%, rgba(120, 162, 220, 0.28) 0%, transparent 75%), linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+  --degradado-fondo: radial-gradient(60% 65% at 100% 0%, rgba(120, 162, 220, 0.26) 0%, rgba(120, 162, 220, 0.08) 45%, transparent 72%), radial-gradient(50% 60% at 100% 100%, rgba(160, 140, 225, 0.20) 0%, transparent 72%), radial-gradient(40% 45% at 0% 100%, rgba(110, 190, 230, 0.12) 0%, transparent 70%), linear-gradient(160deg, #18203a 0%, #1b2233 55%, #1e2236 100%);
   --degradado-boton: linear-gradient(135deg, #4f78ad 0%, #5a83b8 100%);
-  --vidrio-fondo: rgba(22, 27, 38, 0.6);
-  --vidrio-fondo-fuerte: rgba(22, 27, 38, 0.8);
-  --vidrio-borde: rgba(255, 255, 255, 0.08);
-  --vidrio-linea: rgba(255, 255, 255, 0.1);
+  --vidrio-fondo: rgba(44, 54, 78, 0.5);
+  --vidrio-fondo-fuerte: rgba(52, 62, 88, 0.65);
+  --vidrio-borde: rgba(255, 255, 255, 0.22);
+  --vidrio-linea: rgba(255, 255, 255, 0.14);
 
   /* Insignias y avisos de color: fondos translúcidos y texto más claro */
   /* rose */
@@ -243,10 +243,10 @@
     color-scheme: dark;
 
     /* Escala de grises invertida: fondos oscuros, texto claro */
-    --color-slate-50: #0c111d;
-    --color-slate-100: #172134;
-    --color-slate-200: #243046;
-    --color-slate-300: #34435b;
+    --color-slate-50: #1a2133;
+    --color-slate-100: #28324a;
+    --color-slate-200: #353f59;
+    --color-slate-300: #46526d;
     --color-slate-400: #6f7f96;
     --color-slate-500: #98a6ba;
     --color-slate-600: #b6c1d0;
@@ -254,15 +254,15 @@
     --color-slate-800: #e2e8f0;
     --color-slate-900: #f1f5f9;
 
-    --color-superficie: #161b26;
-    --color-lateral: rgba(17, 24, 39, 0.55);
+    --color-superficie: #252e44;
+    --color-lateral: rgba(30, 38, 58, 0.5);
   --color-lateral-borde: #1e293b;
   --color-lateral-titulo: #ffffff;
   --color-lateral-texto: #a7b3c6;
   --color-lateral-suave: #6b7a90;
   --color-lateral-hover: rgba(255, 255, 255, 0.05);
-    --color-lateral-activo: rgba(255, 255, 255, 0.1);
-  --color-lateral-activo-texto: #a9c4e6;
+    --color-lateral-activo: rgba(255, 255, 255, 0.14);
+  --color-lateral-activo-texto: #ffffff;
 
     --color-marca-50: color-mix(in oklab, #6f97c9 16%, transparent);
     --color-marca-100: color-mix(in oklab, #6f97c9 26%, transparent);
@@ -272,7 +272,7 @@
     --color-marca-600: #5a83b8;
     --color-marca-700: #a9c4e6;
 
-    --color-chat-fondo: #0d1520;
+    --color-chat-fondo: #182033;
     --color-burbuja-propia: #134d3a;
 
     /* Gráficos: mismos tonos, versión para fondo oscuro */
@@ -285,14 +285,14 @@
     --secuencial-400: #256abf;
     --secuencial-550: #5598e7;
     --secuencial-700: #9ec5f4;
-    --rejilla: #243046;
-  --degradado-lateral: radial-gradient(120% 45% at 0% 100%, rgba(111, 151, 201, 0.22) 0%, transparent 75%), linear-gradient(180deg, rgba(15, 21, 34, 0.4) 0%, rgba(17, 24, 39, 0.2) 100%);
-  --degradado-fondo: radial-gradient(55% 60% at 100% 0%, rgba(111, 151, 201, 0.14) 0%, transparent 70%), radial-gradient(45% 55% at 100% 100%, rgba(139, 124, 200, 0.10) 0%, transparent 72%), linear-gradient(160deg, #0c111d 0%, #0f1424 100%);
+    --rejilla: #353f59;
+  --degradado-lateral: radial-gradient(120% 45% at 0% 100%, rgba(120, 162, 220, 0.28) 0%, transparent 75%), linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+  --degradado-fondo: radial-gradient(60% 65% at 100% 0%, rgba(120, 162, 220, 0.26) 0%, rgba(120, 162, 220, 0.08) 45%, transparent 72%), radial-gradient(50% 60% at 100% 100%, rgba(160, 140, 225, 0.20) 0%, transparent 72%), radial-gradient(40% 45% at 0% 100%, rgba(110, 190, 230, 0.12) 0%, transparent 70%), linear-gradient(160deg, #18203a 0%, #1b2233 55%, #1e2236 100%);
   --degradado-boton: linear-gradient(135deg, #4f78ad 0%, #5a83b8 100%);
-  --vidrio-fondo: rgba(22, 27, 38, 0.6);
-  --vidrio-fondo-fuerte: rgba(22, 27, 38, 0.8);
-  --vidrio-borde: rgba(255, 255, 255, 0.08);
-  --vidrio-linea: rgba(255, 255, 255, 0.1);
+  --vidrio-fondo: rgba(44, 54, 78, 0.5);
+  --vidrio-fondo-fuerte: rgba(52, 62, 88, 0.65);
+  --vidrio-borde: rgba(255, 255, 255, 0.22);
+  --vidrio-linea: rgba(255, 255, 255, 0.14);
 
     /* Insignias y avisos de color: fondos translúcidos y texto más claro */
     /* rose */
@@ -402,9 +402,9 @@ body {
   backdrop-filter: blur(12px) saturate(160%);
   -webkit-backdrop-filter: blur(12px) saturate(160%);
 }
-:root[data-theme="dark"] .bg-lateral { box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.06); }
+:root[data-theme="dark"] .bg-lateral { box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.16); }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .bg-lateral { box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.06); }
+  :root:not([data-theme="light"]) .bg-lateral { box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.16); }
 }
 
 /* Barras de desplazamiento discretas */
