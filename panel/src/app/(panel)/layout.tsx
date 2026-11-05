@@ -62,10 +62,10 @@ export default async function LayoutPanel({ children }: { children: React.ReactN
       <aside className={`hidden border-lateral-borde bg-lateral md:fixed md:inset-y-0 md:flex md:flex-col md:overflow-y-auto md:border-r md:py-6 ${menuCompacto ? 'md:w-[76px] md:px-3' : 'md:w-[270px] md:px-5'}`}>
         {/* Logo oficial UPeU */}
         {menuCompacto ? (
-          <div className="mb-6 flex justify-center" title={`CRM Admisión · Juliaca · ${etiquetaRol(sesion)}`}><LogoUpeu tipo="isotipo" className="h-9" /></div>
+          <div className="mb-6 flex justify-center" title={`CRM Admisión · Juliaca · ${etiquetaRol(sesion)}`}><LogoUpeu tipo="isotipo" variante="blanco" className="h-9" /></div>
         ) : (
           <div className="mb-8 px-2">
-            <LogoUpeu className="h-11" />
+            <LogoUpeu variante="blanco" className="h-11" />
             <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
               <span className="rounded-full bg-dorado-50 px-2.5 py-0.5 font-semibold text-dorado-700">CRM Admisión</span>
               <span className="text-lateral-suave">Juliaca · {etiquetaRol(sesion)}</span>
@@ -84,12 +84,12 @@ export default async function LayoutPanel({ children }: { children: React.ReactN
           {/* Celular: ☰ con el menú completo, el tema y cerrar sesión */}
           <MenuMovil>
             <div className="mb-5 px-2 pr-10">
-              <LogoUpeu className="h-9" />
+              <LogoUpeu variante="blanco" className="h-9" />
               <div className="mt-4 flex items-center gap-3">
                 {avatar}
                 <div className="min-w-0 leading-tight">
-                  <p className="truncate text-sm font-medium text-slate-800">{perfil.nombre}</p>
-                  <p className="truncate text-xs text-slate-500">{etiquetaRol(sesion)} · {perfil.usuario}</p>
+                  <p className="truncate text-sm font-medium text-lateral-titulo">{perfil.nombre}</p>
+                  <p className="truncate text-xs text-lateral-suave">{etiquetaRol(sesion)} · {perfil.usuario}</p>
                 </div>
               </div>
             </div>
@@ -97,7 +97,7 @@ export default async function LayoutPanel({ children }: { children: React.ReactN
             <div className="mt-6 flex items-center justify-between gap-3 border-t border-lateral-borde px-2 pt-4">
               <SelectorTema inicial={temaGuardado} />
               <form action={cerrarSesion}>
-                <button className="rounded-lg px-3 py-2 text-sm font-medium text-rose-600 hover:bg-rose-50">⏻ Cerrar sesión</button>
+                <button className="rounded-lg px-3 py-2 text-sm font-medium text-rose-300 hover:bg-lateral-hover">⏻ Cerrar sesión</button>
               </form>
             </div>
           </MenuMovil>
@@ -108,7 +108,7 @@ export default async function LayoutPanel({ children }: { children: React.ReactN
           <div className="ml-1 hidden items-center gap-3 border-l border-slate-200 pl-3 md:flex">
             {avatar}
             <div className="hidden min-w-0 leading-tight lg:block">
-              <p className="truncate text-sm font-medium text-slate-800">{perfil.nombre}</p>
+              <p className="truncate text-sm font-medium text-lateral-titulo">{perfil.nombre}</p>
               <p className="truncate text-xs text-slate-500">{perfil.usuario}</p>
             </div>
             <form action={cerrarSesion}>

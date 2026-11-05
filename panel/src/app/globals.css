@@ -9,26 +9,26 @@
    los componentes no cambian, solo los valores.
    ===================================================================== */
 @theme {
-  /* Estilo TailAdmin con la marca UPeU: tipografía Outfit, azul UPeU #003865, dorado #F7A800, grises cálidos y sombras suaves */
+  /* Estilo "Centro de Simulación" UPeU: tipografía Outfit, turquesa profundo #0f6b73, dorado #d9a521, fondo gris verdoso y sombras suaves */
   --font-sans: var(--font-outfit), ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
   /* Pantallas muy anchas (1800 px): la ficha del lead muestra los detalles abiertos por defecto */
   --breakpoint-3xl: 112.5rem;
 
-  --color-marca-50: #e9f1f8;
-  --color-marca-100: #d2e2f0;
-  --color-marca-200: #a9c6df;
-  --color-marca-600: #003865;
-  --color-marca-700: #0b4f8c;
-  --color-marca-800: #002a4c;
+  --color-marca-50: #e6f3f3;
+  --color-marca-100: #cde8e9;
+  --color-marca-200: #9fd0d3;
+  --color-marca-600: #0f6b73;
+  --color-marca-700: #0c5960;
+  --color-marca-800: #0a4148;
 
   /* Dorado UPeU (acento) */
-  --color-dorado-50: #fff6e0;
-  --color-dorado-400: #f7a800;
-  --color-dorado-700: #8a5d00;
+  --color-dorado-50: #fbf3dc;
+  --color-dorado-400: #d9a521;
+  --color-dorado-700: #85600c;
 
   /* Grises de TailAdmin */
-  --color-slate-50: #f9fafb;
-  --color-slate-100: #f2f4f7;
+  --color-slate-50: #f1f6f7;
+  --color-slate-100: #e9f0f1;
   --color-slate-200: #e4e7ec;
   --color-slate-300: #d0d5dd;
   --color-slate-400: #98a2b3;
@@ -42,16 +42,16 @@
   --shadow-theme-sm: 0px 1px 3px 0px rgba(16, 24, 40, 0.1), 0px 1px 2px 0px rgba(16, 24, 40, 0.06);
   --shadow-theme-md: 0px 4px 8px -2px rgba(16, 24, 40, 0.1), 0px 2px 4px -2px rgba(16, 24, 40, 0.06);
 
-  /* Superficies y menú lateral (claro, como TailAdmin) */
+  /* Superficies y menú lateral (turquesa oscuro, como la cabecera del Centro de Simulación) */
   --color-superficie: #ffffff;
-  --color-lateral: #ffffff;
-  --color-lateral-borde: #e4e7ec;
-  --color-lateral-titulo: #101828;
-  --color-lateral-texto: #344054;
-  --color-lateral-suave: #98a2b3;
-  --color-lateral-hover: #f2f4f7;
-  --color-lateral-activo: #e9f1f8;
-  --color-lateral-activo-texto: #003865;
+  --color-lateral: #0b4851;
+  --color-lateral-borde: #0e5862;
+  --color-lateral-titulo: #ffffff;
+  --color-lateral-texto: #d4e8ea;
+  --color-lateral-suave: #8dbcc1;
+  --color-lateral-hover: rgba(255, 255, 255, 0.07);
+  --color-lateral-activo: #12808a;
+  --color-lateral-activo-texto: #ffffff;
 
   /* Chat estilo WhatsApp */
   --color-chat-fondo: #efeae2;
@@ -72,6 +72,10 @@
   --secuencial-550: #1c5cab;
   --secuencial-700: #0d366b;
   --rejilla: #e2e8f0;
+  /* Degradados suaves: menú turquesa profundo -> turquesa, fondo menta casi blanco, botón turquesa */
+  --degradado-lateral: linear-gradient(180deg, #0a3f47 0%, #0c4f58 45%, #11707a 100%);
+  --degradado-fondo: linear-gradient(160deg, #eef6f6 0%, #f5f9f9 45%, #fbf8f0 100%);
+  --degradado-boton: linear-gradient(135deg, #0f6b73 0%, #14838c 100%);
 }
 
 /* ---------------------------------------------------------------------
@@ -82,7 +86,7 @@
   color-scheme: dark;
 
   /* Escala de grises invertida: fondos oscuros, texto claro */
-  --color-slate-50: #0c111d;
+  --color-slate-50: #0b1416;
   --color-slate-100: #172134;
   --color-slate-200: #243046;
   --color-slate-300: #34435b;
@@ -93,23 +97,23 @@
   --color-slate-800: #e2e8f0;
   --color-slate-900: #f1f5f9;
 
-  --color-superficie: #161b26;
-  --color-lateral: #101828;
-  --color-lateral-borde: #1d2939;
+  --color-superficie: #14201f;
+  --color-lateral: #0a1d21;
+  --color-lateral-borde: #143036;
   --color-lateral-titulo: #ffffff;
-  --color-lateral-texto: #98a2b3;
-  --color-lateral-suave: #667085;
+  --color-lateral-texto: #a9c4c7;
+  --color-lateral-suave: #6e8f93;
   --color-lateral-hover: rgba(255, 255, 255, 0.05);
-  --color-lateral-activo: rgba(77, 141, 214, 0.16);
-  --color-lateral-activo-texto: #9cc3ec;
+  --color-lateral-activo: rgba(42, 160, 168, 0.22);
+  --color-lateral-activo-texto: #8fd8dd;
 
-  --color-marca-50: color-mix(in oklab, #2e7bd1 16%, transparent);
-  --color-marca-100: color-mix(in oklab, #2e7bd1 26%, transparent);
-  --color-marca-200: color-mix(in oklab, #2e7bd1 40%, transparent);
-  --color-dorado-50: color-mix(in oklab, #f7a800 14%, transparent);
+  --color-marca-50: color-mix(in oklab, #2aa0a8 16%, transparent);
+  --color-marca-100: color-mix(in oklab, #2aa0a8 26%, transparent);
+  --color-marca-200: color-mix(in oklab, #2aa0a8 40%, transparent);
+  --color-dorado-50: color-mix(in oklab, #d9a521 14%, transparent);
   --color-dorado-700: #f7c04a;
-  --color-marca-600: #2e6fb7;
-  --color-marca-700: #9cc3ec;
+  --color-marca-600: #1f8c94;
+  --color-marca-700: #8fd8dd;
 
   --color-chat-fondo: #0d1520;
   --color-burbuja-propia: #134d3a;
@@ -125,6 +129,9 @@
   --secuencial-550: #5598e7;
   --secuencial-700: #9ec5f4;
   --rejilla: #243046;
+  --degradado-lateral: linear-gradient(180deg, #071518 0%, #0a1d21 60%, #0d2a2f 100%);
+  --degradado-fondo: linear-gradient(160deg, #0b1416 0%, #0d1a1c 100%);
+  --degradado-boton: linear-gradient(135deg, #17767e 0%, #1f8c94 100%);
 
   /* Insignias y avisos de color: fondos translúcidos y texto más claro */
   /* rose */
@@ -219,7 +226,7 @@
     color-scheme: dark;
 
     /* Escala de grises invertida: fondos oscuros, texto claro */
-    --color-slate-50: #0c111d;
+    --color-slate-50: #0b1416;
     --color-slate-100: #172134;
     --color-slate-200: #243046;
     --color-slate-300: #34435b;
@@ -230,23 +237,23 @@
     --color-slate-800: #e2e8f0;
     --color-slate-900: #f1f5f9;
 
-    --color-superficie: #161b26;
-    --color-lateral: #101828;
-  --color-lateral-borde: #1d2939;
+    --color-superficie: #14201f;
+    --color-lateral: #0a1d21;
+  --color-lateral-borde: #143036;
   --color-lateral-titulo: #ffffff;
-  --color-lateral-texto: #98a2b3;
-  --color-lateral-suave: #667085;
+  --color-lateral-texto: #a9c4c7;
+  --color-lateral-suave: #6e8f93;
   --color-lateral-hover: rgba(255, 255, 255, 0.05);
-    --color-lateral-activo: rgba(77, 141, 214, 0.16);
-  --color-lateral-activo-texto: #9cc3ec;
+    --color-lateral-activo: rgba(42, 160, 168, 0.22);
+  --color-lateral-activo-texto: #8fd8dd;
 
-    --color-marca-50: color-mix(in oklab, #2e7bd1 16%, transparent);
-    --color-marca-100: color-mix(in oklab, #2e7bd1 26%, transparent);
-    --color-marca-200: color-mix(in oklab, #2e7bd1 40%, transparent);
-    --color-dorado-50: color-mix(in oklab, #f7a800 14%, transparent);
+    --color-marca-50: color-mix(in oklab, #2aa0a8 16%, transparent);
+    --color-marca-100: color-mix(in oklab, #2aa0a8 26%, transparent);
+    --color-marca-200: color-mix(in oklab, #2aa0a8 40%, transparent);
+    --color-dorado-50: color-mix(in oklab, #d9a521 14%, transparent);
     --color-dorado-700: #f7c04a;
-    --color-marca-600: #2e6fb7;
-    --color-marca-700: #9cc3ec;
+    --color-marca-600: #1f8c94;
+    --color-marca-700: #8fd8dd;
 
     --color-chat-fondo: #0d1520;
     --color-burbuja-propia: #134d3a;
@@ -262,6 +269,9 @@
     --secuencial-550: #5598e7;
     --secuencial-700: #9ec5f4;
     --rejilla: #243046;
+  --degradado-lateral: linear-gradient(180deg, #071518 0%, #0a1d21 60%, #0d2a2f 100%);
+  --degradado-fondo: linear-gradient(160deg, #0b1416 0%, #0d1a1c 100%);
+  --degradado-boton: linear-gradient(135deg, #17767e 0%, #1f8c94 100%);
 
     /* Insignias y avisos de color: fondos translúcidos y texto más claro */
     /* rose */
@@ -353,7 +363,12 @@
 
 body {
   @apply bg-slate-50 text-slate-900 antialiased;
+  background-image: var(--degradado-fondo);
+  background-attachment: fixed;
 }
+
+/* Menú lateral con degradado (el color de fondo queda de respaldo) */
+.bg-lateral { background-image: var(--degradado-lateral); }
 
 /* Barras de desplazamiento discretas */
 * {
@@ -369,7 +384,7 @@ body {
 }
 
 @utility boton {
-  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-marca-600 px-4 py-2 text-sm font-semibold text-white shadow-theme-xs transition hover:brightness-110 focus-visible:ring-2 focus-visible:ring-marca-100 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60;
+  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-marca-600 bg-(image:--degradado-boton) px-4 py-2 text-sm font-semibold text-white shadow-[inset_0_-3px_0_var(--color-dorado-400)] transition hover:brightness-110 focus-visible:ring-2 focus-visible:ring-marca-100 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60;
 }
 
 @utility boton-secundario {
@@ -377,7 +392,7 @@ body {
 }
 
 @utility tarjeta {
-  @apply rounded-2xl border border-slate-200 bg-superficie shadow-theme-xs;
+  @apply rounded-2xl border border-slate-200/80 bg-superficie shadow-theme-sm;
 }
 
 /* Tecla de atajo: <kbd> */

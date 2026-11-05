@@ -15,7 +15,7 @@ export default async function PaginaLogin(props: PageProps<'/login'>) {
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: "url('/marca/campus-juliaca.webp')" }}
       />
-      <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-[#003865]/95 via-[#003865]/85 to-[#002a4c]/70" />
+      <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-[#0a3f47]/95 via-[#0f6b73]/85 to-[#11707a]/70" />
 
       <div className="relative w-full max-w-sm">
         <div className="mb-6 flex justify-center">
