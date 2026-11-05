@@ -78,7 +78,7 @@ export const PLANTILLAS: Record<keyof typeof TIPOS_FORMULARIO, FormularioActivid
       { id: 'p6', texto: 'Afiliación religiosa', tipo: 'opcion', opciones: ['Adventista', 'Católico', 'Evangélico', 'Otra', 'Ninguna'], obligatoria: true, junto: 'dni' },
       { id: 'p7', texto: 'Bautizado', tipo: 'si_no', obligatoria: true, junto: 'dni' },
       { id: 'p8', texto: 'Discapacitado', tipo: 'si_no', obligatoria: true, junto: 'dni' },
-      { id: 'p15', texto: 'Por tus costumbres y antepasados te sientes parte de', tipo: 'opcion', opciones: ['Quechua', 'Aimara', 'Nativo o indígena de la Amazonía', 'Otro pueblo indígena u originario', 'Afroperuano', 'Blanco', 'Mestizo', 'Otro', 'No sabe / no responde'], obligatoria: true, junto: 'dni' },
+      { id: 'p15', texto: 'Por tus costumbres y antepasados te sientes parte de', tipo: 'opcion', opciones: ['Un pueblo indígena u originario', 'Población afroperuana, negra, morena, zamba, mulata, afrodescendiente o parte del pueblo afroperuano', 'Otro grupo étnico', 'No sabe/no responde'], obligatoria: true, junto: 'dni' },
       { id: 'p16', texto: 'Hablas alguna lengua indígena u originaria', tipo: 'opcion', opciones: ['No', 'Quechua', 'Aimara', 'Otra lengua originaria'], obligatoria: true, junto: 'dni' },
       { id: 'p10', texto: 'Nro. de referencia familiar (padre o madre)', tipo: 'numero', obligatoria: true, junto: 'dni' },
       { id: 'p17', texto: 'Correo electrónico', tipo: 'correo', obligatoria: true, junto: 'dni' },
