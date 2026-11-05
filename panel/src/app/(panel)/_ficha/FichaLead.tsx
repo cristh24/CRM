@@ -22,7 +22,8 @@ import { BandejaMovil } from './BandejaMovil'
 import { VentanaDetalle } from '@/components/VentanaWhatsApp'
 import { QuitarApoyo } from './QuitarApoyo'
 import { BotonesTarea, FormularioTarea } from '@/components/Tareas'
-import { textoProcedencia } from '@/lib/ubigeos'
+import { rutaUbigeo, textoProcedencia } from '@/lib/ubigeos'
+import { NotaSistema } from './NotaSistema'
 import { UBIGEOS } from '@/lib/ubigeos-servidor'
 import { ahoraMs } from '@/lib/texto'
 
@@ -247,6 +248,7 @@ export async function FichaLead({ id, seccion }: { id: string; seccion: 'leads' 
           )}
           <Conversacion
             leadId={lead.id} telefono={lead.telefono} inicial={chat} nombreAlumno={lead.nombre}
+            domicilio={lead.ubigeo ? rutaUbigeo(lead.ubigeo, UBIGEOS) : null}
             miNombre={perfil.nombre} nombresAutores={nombresAutores}
             respuestas={respuestas}
             acciones={puede('costos') ? (
@@ -362,9 +364,11 @@ export async function FichaLead({ id, seccion }: { id: string; seccion: 'leads' 
                         {h.autor?.nombre && <span className="text-slate-500">· {h.autor.nombre}</span>}
                         {esMiNota && <BotonEliminarNota leadId={lead.id} notaId={h.id} />}
                       </div>
-                      <p className="mt-1 text-sm break-words whitespace-pre-wrap text-slate-700">
-                        {h.tipo === 'cambio_estado' ? textoCambioEstado(h.contenido) : h.contenido}
-                      </p>
+                      <div className="mt-1 text-sm break-words whitespace-pre-wrap text-slate-700">
+                        {h.tipo === 'cambio_estado' ? textoCambioEstado(h.contenido)
+                          : h.tipo === 'sistema' ? <NotaSistema texto={h.contenido} domicilio={lead.ubigeo ? rutaUbigeo(lead.ubigeo, UBIGEOS) : null} />
+                          : h.contenido}
+                      </div>
                     </div>
                   </li>
                 )

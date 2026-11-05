@@ -26,6 +26,8 @@ interface Props {
   nombresAutores: Record<string, string>
   /** Nombre del alumno para sus mensajes (si no tiene, se muestra su número) */
   nombreAlumno?: string | null
+  /** Departamento · provincia · distrito del lead (en las respuestas del formulario, junto a su dirección) */
+  domicilio?: string | null
   /** Plantillas del chat; {nombre}, {carrera} y {asesor} se reemplazan con `variables` */
   respuestas?: RespuestaChat[]
   variables?: { nombre: string; carrera: string; asesor: string }
@@ -36,7 +38,7 @@ interface Props {
 }
 
 export function Conversacion(
-  { leadId, telefono, inicial, miNombre, nombresAutores, encabezado, acciones, respuestas = [], variables, nombreAlumno }: Props,
+  { leadId, telefono, inicial, miNombre, nombresAutores, encabezado, acciones, respuestas = [], variables, nombreAlumno, domicilio }: Props,
 ) {
   const { mensajes, setMensajes, enVivo, agregar } = useMensajesEnVivo(leadId, inicial)
   const [texto, setTexto] = useState('')
@@ -253,7 +255,7 @@ export function Conversacion(
         {mensajes.map((m, i) => (
           <Burbuja
             key={m.id} m={m} previo={mensajes[i - 1]} ultimoAlumno={ultimoAlumno}
-            nombreAlumno={nombreCorto} nombreAsesor={nombreAutor(m)}
+            nombreAlumno={nombreCorto} nombreAsesor={nombreAutor(m)} domicilio={domicilio}
             alReintentar={() => enviar(m.contenido ?? '', null, m.id < 0 ? m.id : undefined)}
           />
         ))}

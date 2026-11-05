@@ -1,5 +1,6 @@
 // Un mensaje del chat: separador de día, aviso del sistema o burbuja (alumno, Genesys o asesor) con su hora y checks.
 import { Adjunto } from '../Adjunto'
+import { NotaSistema } from '../NotaSistema'
 import { diaLima } from '@/lib/texto'
 import { etiquetaDia, hora, quien, soloHora, type MensajeChat } from './utilidades'
 
@@ -17,8 +18,10 @@ function Checks({ m, ultimoAlumno }: { m: MensajeChat; ultimoAlumno: string | nu
   return <span title="Enviado. WhatsApp aún no confirma la entrega"> ✓</span>
 }
 
-export function Burbuja({ m, previo, ultimoAlumno, nombreAlumno, nombreAsesor, alReintentar }: {
+export function Burbuja({ m, previo, ultimoAlumno, nombreAlumno, nombreAsesor, alReintentar, domicilio }: {
   m: MensajeChat
+  /** Departamento · provincia · distrito del lead, para la dirección en las respuestas del formulario */
+  domicilio?: string | null
   /** Mensaje anterior (para el separador de día y para agrupar mensajes seguidos) */
   previo: MensajeChat | undefined
   /** Último mensaje del alumno: si es posterior, el mensaje del asesor le llegó (✓✓) */
@@ -38,8 +41,8 @@ export function Burbuja({ m, previo, ultimoAlumno, nombreAlumno, nombreAsesor, a
     return (
       <div>
         {separador}
-        <div className="mx-auto my-2 max-w-sm rounded-lg bg-amber-50 px-3 py-1.5 text-center text-xs whitespace-pre-wrap text-amber-900 shadow-sm">
-          {m.contenido}
+        <div className="mx-auto my-2 max-w-md rounded-lg bg-amber-50 px-3 py-1.5 text-center text-xs text-amber-900 shadow-sm">
+          <NotaSistema texto={m.contenido} domicilio={domicilio} />
         </div>
       </div>
     )
