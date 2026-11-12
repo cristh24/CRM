@@ -18,5 +18,6 @@ export async function marcarDescuento(clave: string, leadId: string, aplicado: b
     : await supabase.from('formulario_descuentos').delete().eq('clave', clave).eq('lead_id', leadId)
   if (error) return { error: mensajeError(error) }
   revalidatePath(`/formularios/${clave}`)
+  revalidatePath('/actividades')
   return {}
 }

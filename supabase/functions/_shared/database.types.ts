@@ -32,13 +32,13 @@ isOneToOne: false
                   ]
                 },"formulario_descuentos": {
                   Row: {
-                    "clave": string,"created_at": string,"lead_id": string,"marcado_por": string | null
+                    "clave": string,"created_at": string,"estado_anterior": Database["public"]["Enums"]["lead_estado"] | null,"lead_id": string,"marcado_por": string | null
                   }
                   Insert: {
-                    "clave": string,"created_at"?: string,"lead_id": string,"marcado_por"?: string | null
+                    "clave": string,"created_at"?: string,"estado_anterior"?: Database["public"]["Enums"]["lead_estado"] | null,"lead_id": string,"marcado_por"?: string | null
                   }
                   Update: {
-                    "clave"?: string,"created_at"?: string,"lead_id"?: string,"marcado_por"?: string | null
+                    "clave"?: string,"created_at"?: string,"estado_anterior"?: Database["public"]["Enums"]["lead_estado"] | null,"lead_id"?: string,"marcado_por"?: string | null
                   }
                   Relationships: [
                     {

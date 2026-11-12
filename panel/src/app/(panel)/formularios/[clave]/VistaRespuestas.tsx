@@ -153,8 +153,8 @@ function CheckDescuento({ clave, envio, puedeMarcar, conTexto = false }: { clave
   const cambiar = async () => {
     const nuevo = !marcado
     const ok = await confirmar(nuevo
-      ? { titulo: '¿Marcar el descuento como aplicado?', mensaje: <>A <b>{envio.nombre}</b> se le marcará el descuento como aplicado.</>, confirmar: 'Sí, marcar' }
-      : { titulo: '¿Quitar el descuento aplicado?', mensaje: <>A <b>{envio.nombre}</b> se le quitará la marca de descuento aplicado.</>, confirmar: 'Sí, quitar', peligro: true })
+      ? { titulo: '¿Marcar el descuento como aplicado?', mensaje: <>A <b>{envio.nombre}</b> se le marcará el descuento como aplicado y pasará a <b>matriculado</b>.</>, confirmar: 'Sí, marcar' }
+      : { titulo: '¿Quitar el descuento aplicado?', mensaje: <>A <b>{envio.nombre}</b> se le quitará la marca de descuento aplicado y volverá al estado que tenía antes de matricularse.</>, confirmar: 'Sí, quitar', peligro: true })
     if (!ok) return
     iniciar(async () => {
       setMarcado(nuevo)
