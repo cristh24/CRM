@@ -30,6 +30,31 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"formulario_descuentos": {
+                  Row: {
+                    "clave": string,"created_at": string,"lead_id": string,"marcado_por": string | null
+                  }
+                  Insert: {
+                    "clave": string,"created_at"?: string,"lead_id": string,"marcado_por"?: string | null
+                  }
+                  Update: {
+                    "clave"?: string,"created_at"?: string,"lead_id"?: string,"marcado_por"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "formulario_descuentos_lead_id_fkey"
+      columns: ["lead_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "formulario_descuentos_marcado_por_fkey"
+      columns: ["marcado_por"]
+isOneToOne: false
+      referencedRelation: "asesores"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"actividades": {
                   Row: {
                     "activa": boolean,"asignacion": string,"bienvenida": boolean,"codigo": string,"created_at": string,"fecha": string | null,"formulario": NonNullable<Json>,"id": number,"lugar": string | null,"nombre": string,"responsable_id": string | null,"tipo": string

@@ -19,7 +19,7 @@ export default async function RespuestasFormulario(props: PageProps<'/formulario
         <h1 className="mt-1 text-2xl font-semibold">{f.titulo}</h1>
         {f.detalle && <p className="text-sm text-slate-500">{f.detalle}</p>}
       </div>
-      <VistaRespuestas titulo={f.titulo} preguntas={f.preguntas} envios={f.envios} />
+      <VistaRespuestas clave={f.clave} titulo={f.titulo} preguntas={f.preguntas} envios={f.envios} />
     </div>
   )
 }

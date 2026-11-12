@@ -9,8 +9,12 @@ import { UBIGEOS } from '@/lib/ubigeos-servidor'
 
 /** barras: se cuentan las respuestas (opciones); lista: respuestas escritas, una debajo de otra */
 export interface PreguntaVista { id: string; texto: string; resumen: 'barras' | 'lista'; varias?: boolean }
-export interface Envio { leadId: string; nombre: string; telefono: string; asesor: string; fecha: string; valores: Record<string, string> }
-export interface FormularioVista { titulo: string; detalle: string; preguntas: PreguntaVista[]; envios: Envio[] }
+export interface Envio {
+  leadId: string; nombre: string; telefono: string; asesor: string; fecha: string; valores: Record<string, string>
+  /** Check "Descuento aplicado": quién lo marcó y cuándo */
+  descuento?: { por: string; fecha: string } | null
+}
+export interface FormularioVista { clave: string; titulo: string; detalle: string; preguntas: PreguntaVista[]; envios: Envio[] }
 export interface ResumenFormulario {
   clave: string; nombre: string; tipo: 'actividad' | 'qr'; detalle: string; envios: number; ultimo: string | null; activa: boolean
 }
@@ -110,6 +114,18 @@ export async function listarFormularios(): Promise<ResumenFormulario[]> {
 
 /** Preguntas y respuestas de un formulario: "a-<id>" (actividad) o "q-<id del asesor>" (su QR). */
 export async function cargarFormulario(clave: string): Promise<FormularioVista | null> {
+  const supabase = await crearClienteServidor()
+  const [f, { data: descuentos }] = await Promise.all([
+    leerRespuestas(clave),
+    supabase.from('formulario_descuentos')
+      .select('lead_id, created_at, marcado:asesores!formulario_descuentos_marcado_por_fkey(nombre)').eq('clave', clave).limit(5000),
+  ])
+  if (!f) return null
+  const porLead = new Map((descuentos ?? []).map((d) => [d.lead_id, { por: d.marcado?.nombre ?? '', fecha: d.created_at }]))
+  return { ...f, clave, envios: f.envios.map((e) => ({ ...e, descuento: porLead.get(e.leadId) ?? null })) }
+}
+
+async function leerRespuestas(clave: string): Promise<Omit<FormularioVista, 'clave'> | null> {
   const supabase = await crearClienteServidor()
 
   if (/^a-\d+$/.test(clave)) {

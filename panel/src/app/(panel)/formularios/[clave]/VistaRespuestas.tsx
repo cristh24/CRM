@@ -2,10 +2,12 @@
 
 // Respuestas de un formulario como en un cuestionario: Resumen (gráficos por pregunta), Individual (una por una) y Tabla.
 import Link from '@/components/Enlace'
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useTransition } from 'react'
 import { BotonCsv } from '@/components/BotonCsv'
+import { useAviso, useConfirmar } from '@/components/Confirmacion'
 import { fechaHora } from '@/lib/formato'
 import type { Envio, PreguntaVista } from '@/lib/respuestas-formularios'
+import { marcarDescuento } from '../acciones'
 
 type Pestana = 'resumen' | 'individual' | 'tabla'
 const PERIODOS = { todo: 'Todo', '7': 'Últimos 7 días', '30': 'Últimos 30 días' } as const
@@ -13,7 +15,7 @@ const PERIODOS = { todo: 'Todo', '7': 'Últimos 7 días', '30': 'Últimos 30 dí
 const sinTildes = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 const Vacio = () => <span className="text-slate-400">—</span>
 
-export function VistaRespuestas({ titulo, preguntas, envios }: { titulo: string; preguntas: PreguntaVista[]; envios: Envio[] }) {
+export function VistaRespuestas({ clave, titulo, preguntas, envios }: { clave: string; titulo: string; preguntas: PreguntaVista[]; envios: Envio[] }) {
   const [pestana, setPestana] = useState<Pestana>('resumen')
   const [busqueda, setBusqueda] = useState('')
   const [periodo, setPeriodo] = useState<keyof typeof PERIODOS>('todo')
@@ -49,8 +51,8 @@ export function VistaRespuestas({ titulo, preguntas, envios }: { titulo: string;
           <BotonCsv
             nombreArchivo={`respuestas-${titulo}`}
             filas={[
-              ['Fecha', 'Asesor', ...preguntas.map((p) => p.texto)],
-              ...filtrados.map((e) => [fechaHora(e.fecha), e.asesor, ...preguntas.map((p) => e.valores[p.id] ?? '')]),
+              ['Fecha', 'Asesor', ...preguntas.map((p) => p.texto), 'Descuento aplicado'],
+              ...filtrados.map((e) => [fechaHora(e.fecha), e.asesor, ...preguntas.map((p) => e.valores[p.id] ?? ''), e.descuento ? 'Sí' : 'No']),
             ]}
           />
         )}
@@ -91,6 +93,7 @@ export function VistaRespuestas({ titulo, preguntas, envios }: { titulo: string;
               <Link href={`/leads/${actual.leadId}`} className="text-sm font-medium text-marca-700 hover:underline">Abrir lead →</Link>
             </div>
             <p className="text-xs text-slate-500">Enviado: {fechaHora(actual.fecha)}{actual.asesor ? ` · Asesor: ${actual.asesor}` : ''}</p>
+            <div className="mt-3"><CheckDescuento key={actual.leadId} clave={clave} envio={actual} conTexto /></div>
           </div>
           {preguntas.map((p) => (
             <div key={p.id} className="tarjeta p-5">
@@ -107,6 +110,7 @@ export function VistaRespuestas({ titulo, preguntas, envios }: { titulo: string;
                 <th className="px-4 py-2.5">Alumno</th>
                 {preguntas.filter((p) => p.id !== 'nombre').map((p) => <th key={p.id} className="max-w-[16rem] min-w-32 px-4 py-2.5">{p.texto}</th>)}
                 <th className="px-4 py-2.5">Fecha</th>
+                <th className="px-4 py-2.5 text-center">Descuento aplicado</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -120,6 +124,7 @@ export function VistaRespuestas({ titulo, preguntas, envios }: { titulo: string;
                     <td key={p.id} className="max-w-[16rem] px-4 py-2.5 whitespace-pre-wrap">{e.valores[p.id] || <Vacio />}</td>
                   ))}
                   <td className="px-4 py-2.5 whitespace-nowrap text-slate-500">{fechaHora(e.fecha)}</td>
+                  <td className="px-4 py-2.5 text-center"><CheckDescuento clave={clave} envio={e} /></td>
                 </tr>
               ))}
             </tbody>
@@ -127,6 +132,37 @@ export function VistaRespuestas({ titulo, preguntas, envios }: { titulo: string;
         </div>
       )}
     </div>
+  )
+}
+
+/** Check "Descuento aplicado": marcarlo y quitarlo piden confirmación en un modal. */
+function CheckDescuento({ clave, envio, conTexto = false }: { clave: string; envio: Envio; conTexto?: boolean }) {
+  const [marcado, setMarcado] = useState(!!envio.descuento)
+  const [guardando, iniciar] = useTransition()
+  const confirmar = useConfirmar()
+  const avisar = useAviso()
+  const cambiar = async () => {
+    const nuevo = !marcado
+    const ok = await confirmar(nuevo
+      ? { titulo: '¿Marcar el descuento como aplicado?', mensaje: <>A <b>{envio.nombre}</b> se le marcará el descuento como aplicado.</>, confirmar: 'Sí, marcar' }
+      : { titulo: '¿Quitar el descuento aplicado?', mensaje: <>A <b>{envio.nombre}</b> se le quitará la marca de descuento aplicado.</>, confirmar: 'Sí, quitar', peligro: true })
+    if (!ok) return
+    iniciar(async () => {
+      setMarcado(nuevo)
+      const r = await marcarDescuento(clave, envio.leadId, nuevo)
+      if (r.error) { setMarcado(!nuevo); avisar(`No se pudo guardar: ${r.error}`) }
+    })
+  }
+  const detalle = marcado && envio.descuento ? `Marcado por ${envio.descuento.por || '—'} · ${fechaHora(envio.descuento.fecha)}` : undefined
+  return (
+    <label className={`inline-flex cursor-pointer items-center gap-2 ${guardando ? 'opacity-60' : ''}`} title={detalle}>
+      <input
+        type="checkbox" checked={marcado} disabled={guardando}
+        onChange={(ev) => { ev.preventDefault(); void cambiar() }}
+        className="h-5 w-5 cursor-pointer accent-emerald-600" aria-label={`Descuento aplicado a ${envio.nombre}`}
+      />
+      {conTexto && <span className="text-sm">Descuento aplicado{detalle && <span className="block text-xs text-slate-500">{detalle}</span>}</span>}
+    </label>
   )
 }
 
