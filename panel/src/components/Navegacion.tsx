@@ -40,7 +40,7 @@ export function Navegacion(
         { href: '/costos' as Route, texto: 'Proformas', icono: '💰', modulo: 'costos' },
         { href: '/actividades' as Route, texto: 'Actividades y QR', icono: '🎪', modulo: 'actividades' },
         { href: '/qr' as Route, texto: 'Mi QR (presencial)', icono: '🔳', modulo: 'qr_asesor' },
-        { href: '/formularios' as Route, texto: 'Respuestas de formularios', icono: '📝', modulo: 'actividades' },
+        { href: '/formularios' as Route, texto: 'Respuestas de formularios', icono: '📝' },
       ],
     },
     {

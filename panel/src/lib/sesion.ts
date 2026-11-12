@@ -64,6 +64,11 @@ export async function exigirSuperadmin(): Promise<Sesion> {
   return sesion
 }
 
+/** "Descuento aplicado" en Respuestas de formularios: solo el super admin y los administradores (rol admin). */
+export function puedeMarcarDescuento(sesion: Pick<Sesion, 'superadmin' | 'perfil'>): boolean {
+  return sesion.superadmin || sesion.perfil.rol === 'admin'
+}
+
 /** Nombre del tipo de usuario para mostrar. */
 export function etiquetaRol(sesion: Pick<Sesion, 'superadmin' | 'perfil'>): string {
   if (sesion.superadmin) return 'Super admin'

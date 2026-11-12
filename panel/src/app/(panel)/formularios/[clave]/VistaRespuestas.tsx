@@ -15,7 +15,12 @@ const PERIODOS = { todo: 'Todo', '7': 'Últimos 7 días', '30': 'Últimos 30 dí
 const sinTildes = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 const Vacio = () => <span className="text-slate-400">—</span>
 
-export function VistaRespuestas({ clave, titulo, preguntas, envios }: { clave: string; titulo: string; preguntas: PreguntaVista[]; envios: Envio[] }) {
+export function VistaRespuestas({ clave, puedeMarcar, titulo, preguntas, envios }: {
+  clave: string
+  /** Super admin o administrador: marca y quita el "Descuento aplicado"; los demás solo lo ven */
+  puedeMarcar: boolean
+  titulo: string; preguntas: PreguntaVista[]; envios: Envio[]
+}) {
   const [pestana, setPestana] = useState<Pestana>('resumen')
   const [busqueda, setBusqueda] = useState('')
   const [periodo, setPeriodo] = useState<keyof typeof PERIODOS>('todo')
@@ -93,7 +98,7 @@ export function VistaRespuestas({ clave, titulo, preguntas, envios }: { clave: s
               <Link href={`/leads/${actual.leadId}`} className="text-sm font-medium text-marca-700 hover:underline">Abrir lead →</Link>
             </div>
             <p className="text-xs text-slate-500">Enviado: {fechaHora(actual.fecha)}{actual.asesor ? ` · Asesor: ${actual.asesor}` : ''}</p>
-            <div className="mt-3"><CheckDescuento key={actual.leadId} clave={clave} envio={actual} conTexto /></div>
+            <div className="mt-3"><CheckDescuento key={actual.leadId} clave={clave} envio={actual} puedeMarcar={puedeMarcar} conTexto /></div>
           </div>
           {preguntas.map((p) => (
             <div key={p.id} className="tarjeta p-5">
@@ -124,7 +129,7 @@ export function VistaRespuestas({ clave, titulo, preguntas, envios }: { clave: s
                     <td key={p.id} className="max-w-[16rem] px-4 py-2.5 whitespace-pre-wrap">{e.valores[p.id] || <Vacio />}</td>
                   ))}
                   <td className="px-4 py-2.5 whitespace-nowrap text-slate-500">{fechaHora(e.fecha)}</td>
-                  <td className="px-4 py-2.5 text-center"><CheckDescuento clave={clave} envio={e} /></td>
+                  <td className="px-4 py-2.5 text-center"><CheckDescuento clave={clave} envio={e} puedeMarcar={puedeMarcar} /></td>
                 </tr>
               ))}
             </tbody>
@@ -136,7 +141,7 @@ export function VistaRespuestas({ clave, titulo, preguntas, envios }: { clave: s
 }
 
 /** Check "Descuento aplicado": marcarlo y quitarlo piden confirmación en un modal. */
-function CheckDescuento({ clave, envio, conTexto = false }: { clave: string; envio: Envio; conTexto?: boolean }) {
+function CheckDescuento({ clave, envio, puedeMarcar, conTexto = false }: { clave: string; envio: Envio; puedeMarcar: boolean; conTexto?: boolean }) {
   const [marcado, setMarcado] = useState(!!envio.descuento)
   const [guardando, iniciar] = useTransition()
   const confirmar = useConfirmar()
@@ -153,13 +158,15 @@ function CheckDescuento({ clave, envio, conTexto = false }: { clave: string; env
       if (r.error) { setMarcado(!nuevo); avisar(`No se pudo guardar: ${r.error}`) }
     })
   }
-  const detalle = marcado && envio.descuento ? `Marcado por ${envio.descuento.por || '—'} · ${fechaHora(envio.descuento.fecha)}` : undefined
+  const detalle = marcado && envio.descuento
+    ? `Marcado por ${envio.descuento.por || '—'} · ${fechaHora(envio.descuento.fecha)}`
+    : !puedeMarcar ? 'Solo el super admin o un administrador puede marcarlo' : undefined
   return (
-    <label className={`inline-flex cursor-pointer items-center gap-2 ${guardando ? 'opacity-60' : ''}`} title={detalle}>
+    <label className={`inline-flex items-center gap-2 ${puedeMarcar ? 'cursor-pointer' : 'cursor-default'} ${guardando ? 'opacity-60' : ''}`} title={detalle}>
       <input
-        type="checkbox" checked={marcado} disabled={guardando}
-        onChange={(ev) => { ev.preventDefault(); void cambiar() }}
-        className="h-5 w-5 cursor-pointer accent-emerald-600" aria-label={`Descuento aplicado a ${envio.nombre}`}
+        type="checkbox" checked={marcado} disabled={guardando || !puedeMarcar}
+        onChange={() => { if (puedeMarcar) void cambiar() }}
+        className={`h-5 w-5 accent-emerald-600 ${puedeMarcar ? 'cursor-pointer' : 'cursor-default'}`} aria-label={`Descuento aplicado a ${envio.nombre}`}
       />
       {conTexto && <span className="text-sm">Descuento aplicado{detalle && <span className="block text-xs text-slate-500">{detalle}</span>}</span>}
     </label>

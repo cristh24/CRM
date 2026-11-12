@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from '@/components/Enlace'
-import { exigirPermiso } from '@/lib/sesion'
+import { obtenerSesion } from '@/lib/sesion'
 import { fechaHora } from '@/lib/formato'
 import { listarFormularios } from '@/lib/respuestas-formularios'
 
@@ -8,7 +8,8 @@ export const metadata: Metadata = { title: 'Respuestas de formularios' }
 
 /** Formularios de registro (Actividades y QR del asesor) con cuántos lo llenaron: cada uno abre sus respuestas. */
 export default async function PaginaFormularios(props: PageProps<'/formularios'>) {
-  await exigirPermiso('actividades')
+  // Todos los asesores lo ven (el RLS muestra solo las respuestas de los leads que ve cada uno)
+  await obtenerSesion()
   const filtro = (await props.searchParams).ver === 'qr' ? 'qr' : (await props.searchParams).ver === 'actividad' ? 'actividad' : 'todos'
   const todos = await listarFormularios()
   const lista = todos.filter((f) => filtro === 'todos' || f.tipo === filtro)
