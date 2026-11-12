@@ -26,6 +26,7 @@ const PAGINAS: Omit<Item, 'id' | 'grupo'>[] = [
   { titulo: 'Kanban', icono: '▦', ir: '/kanban', modulo: 'kanban', detalle: 'Tablero por estado' },
   { titulo: 'Registrar lead', icono: '+', ir: '/leads/nuevo', modulo: 'registrar', detalle: 'Nuevo lead manual' },
   { titulo: 'Actividades y QR', icono: '🎪', ir: '/actividades', detalle: 'Ferias y colegios: QR de registro', modulo: 'actividades' },
+  { titulo: 'Respuestas de formularios', icono: '📝', ir: '/formularios', detalle: 'Lo que respondieron en actividades y QR, como un cuestionario', modulo: 'actividades' },
   { titulo: 'Proformas de costos', icono: '💰', ir: '/costos', detalle: 'Calcular costos 2027-1, PDF e imagen', modulo: 'costos' },
   { titulo: 'Dashboard', icono: '◔', ir: '/dashboard', modulo: 'dashboard', detalle: 'Indicadores y gráficos' },
   { titulo: 'Procedencia', icono: '📍', ir: '/procedencia', modulo: 'dashboard', detalle: 'De dónde vienen los leads (país, departamento, provincia, distrito)' },

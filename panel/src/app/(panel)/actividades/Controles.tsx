@@ -4,7 +4,7 @@ import Link from '@/components/Enlace'
 import { useActionState, useEffect, useState, useTransition } from 'react'
 import QRCode from 'qrcode'
 import { useConfirmar } from '@/components/Confirmacion'
-import { cambiarActiva, eliminarActividad, guardarActividad, guardarWhatsappGenesys, type Resultado } from './acciones'
+import { cambiarActiva, duplicarActividad, eliminarActividad, guardarActividad, guardarWhatsappGenesys, type Resultado } from './acciones'
 import { EditorFormulario } from './EditorFormulario'
 import { leerFormulario } from '@/lib/formulario-actividad'
 
@@ -177,15 +177,23 @@ export function TarjetaActividad({ actividad, base, asesores }: { actividad: Act
             </button>
             <a href={url} target="_blank" rel="noreferrer" className="text-sm font-medium text-marca-700 hover:underline">Ver formulario ↗</a>
             <Link href={`/leads?actividad=${actividad.id}`} className="text-sm font-medium text-marca-700 hover:underline">Ver leads →</Link>
-            {(leerFormulario(actividad.formulario).preguntas.length > 0 || actividad.conRespuestas > 0) && (
-              <Link href={`/actividades/${actividad.id}/respuestas`} className="text-sm font-medium text-marca-700 hover:underline">📝 Respuestas ({actividad.conRespuestas})</Link>
-            )}
+            <Link href={`/formularios/a-${actividad.id}`} className="text-sm font-medium text-marca-700 hover:underline">📝 Respuestas</Link>
           </div>
           {actividad.editable && (
             <div className="flex flex-wrap gap-3 text-xs font-medium">
               <button onClick={() => setEditando(!editando)} className="text-marca-700 hover:underline">{editando ? 'Cerrar' : 'Editar'}</button>
               <button disabled={pendiente} onClick={() => iniciar(async () => setR(await cambiarActiva(actividad.id, !actividad.activa)))} className="text-slate-500 hover:underline">
                 {actividad.activa ? 'Cerrar formulario' : 'Volver a abrir'}
+              </button>
+              <button
+                disabled={pendiente} className="text-slate-500 hover:underline"
+                onClick={async () => {
+                  if (await confirmar({ titulo: `¿Duplicar "${actividad.nombre}"?`, mensaje: 'Se crea una actividad nueva con el mismo formulario (campos y preguntas) y su propio QR, sin registros ni respuestas.', confirmar: 'Duplicar' })) {
+                    iniciar(async () => setR(await duplicarActividad(actividad.id)))
+                  }
+                }}
+              >
+                Duplicar
               </button>
               {actividad.eliminable && (
                 <button

@@ -65,6 +65,26 @@ export async function cambiarActiva(id: number, activa: boolean): Promise<Result
   return { ok: activa ? 'Formulario abierto.' : 'Formulario cerrado: el QR ya no recibe registros.' }
 }
 
+/** Copia de una actividad con el mismo formulario (campos y preguntas): sin lugar, fecha, registros ni respuestas. */
+export async function duplicarActividad(id: number): Promise<Resultado> {
+  const { perfil } = await exigirPermiso('actividades')
+  const supabase = await crearClienteServidor()
+  const { data: original } = await supabase.from('actividades')
+    .select('nombre, tipo, asignacion, responsable_id, bienvenida, formulario').eq('id', id).maybeSingle()
+  if (!original) return { error: 'No se encontró la actividad.' }
+  const { error } = await supabase.from('actividades').insert({
+    nombre: `${original.nombre.slice(0, 110)} (copia)`,
+    tipo: original.tipo,
+    asignacion: original.asignacion,
+    responsable_id: original.responsable_id ?? perfil.id,
+    bienvenida: original.bienvenida,
+    formulario: original.formulario,
+  })
+  if (error) return { error: mensajeError(error) }
+  revalidatePath('/actividades')
+  return { ok: 'Copia creada con el mismo formulario: la encuentras en la lista con su propio QR.' }
+}
+
 /** Número de WhatsApp de Genesys: el botón del formulario del QR abre el chat con este número. */
 export async function guardarWhatsappGenesys(_previo: Resultado, formData: FormData): Promise<Resultado> {
   await exigirSuperadmin()
