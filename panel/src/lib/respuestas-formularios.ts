@@ -169,7 +169,8 @@ async function leerRespuestas(clave: string): Promise<Omit<FormularioVista, 'cla
     for (const r of respuestas ?? []) {
       const valores: Record<string, string> = {}
       for (const x of (r.respuestas ?? []) as unknown as { id: string; pregunta: string; respuesta: string }[]) {
-        valores[x.id] = x.respuesta
+        // Fechas guardadas antes con el calendario ("2009-11-10"): se muestran como día/mes/año
+        valores[x.id] = /^\d{4}-\d{2}-\d{2}$/.test(x.respuesta) ? x.respuesta.split('-').reverse().join('/') : x.respuesta
         if (!preguntas.some((q) => q.id === x.id)) preguntas.push({ id: x.id, texto: `${x.pregunta} (ya no está en el formulario)`, resumen: 'lista' })
       }
       propias.set(r.lead_id, { valores, fecha: r.updated_at })

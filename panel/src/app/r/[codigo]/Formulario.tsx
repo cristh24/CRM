@@ -193,6 +193,27 @@ export function FormularioRegistro({ codigo, carreras, carrerasModalidad, colegi
   )
 }
 
+/** Fecha escrita como día/mes/año: las barras se ponen solas al escribir los números (ej. 25032008 → 25/03/2008). */
+function CampoFecha({ p, titulo, campo }: { p: PreguntaActividad; titulo: ReactNode; campo: string }) {
+  const [valor, setValor] = useState('')
+  const formatear = (texto: string) => {
+    const d = texto.replace(/\D/g, '').slice(0, 8)
+    return [d.slice(0, 2), d.slice(2, 4), d.slice(4, 8)].filter(Boolean).join('/')
+  }
+  return (
+    <label className="block text-sm font-medium text-slate-700">{titulo}
+      <input
+        name={`pf_${p.id}`} required={p.obligatoria} value={valor}
+        onChange={(e) => setValor(formatear(e.target.value))}
+        type="text" inputMode="numeric" autoComplete="bday" maxLength={10}
+        pattern="[0-3][0-9]/[01][0-9]/(19|20)[0-9]{2}" title="Escribe la fecha como día/mes/año, por ejemplo 25/03/2008"
+        placeholder="dd/mm/aaaa" className={campo}
+      />
+      <span className="mt-1 block text-xs font-normal text-slate-500">Escribe día/mes/año, por ejemplo 25/03/2008</span>
+    </label>
+  )
+}
+
 /** Pregunta propia de la actividad. Se envía como "p_<id>" (varias opciones: "pv_<id>", una por casilla). */
 function Pregunta({ p, campo, alCambiar }: { p: PreguntaActividad; campo: string; alCambiar?: (valor: string) => void }) {
   const titulo = <>{p.texto}{p.obligatoria && ' *'}</>
@@ -207,14 +228,14 @@ function Pregunta({ p, campo, alCambiar }: { p: PreguntaActividad; campo: string
   if (p.tipo === 'lugar') {
     return <SelectorLugar nombre={`pl_${p.id}`} etiqueta={p.texto} hasta={p.hasta ?? 'distrito'} obligatorio={p.obligatoria} claseCampo={campo} />
   }
-  if (p.tipo === 'fecha' || p.tipo === 'correo' || p.tipo === 'numero') {
+  // Fecha: se escribe (día/mes/año), sin calendario; se envía como "pf_<id>"
+  if (p.tipo === 'fecha') return <CampoFecha p={p} titulo={titulo} campo={campo} />
+  if (p.tipo === 'correo' || p.tipo === 'numero') {
     return (
       <label className="block text-sm font-medium text-slate-700">{titulo}
         <input
           name={`p_${p.id}`} required={p.obligatoria}
-          {...(p.tipo === 'fecha'
-            ? { type: 'date', max: new Date().toISOString().slice(0, 10) }
-            : p.tipo === 'correo'
+          {...(p.tipo === 'correo'
               ? { type: 'email', maxLength: 120, autoComplete: 'email', placeholder: 'tucorreo@gmail.com' }
               : { type: 'tel', inputMode: 'tel' as const, maxLength: 20, pattern: '[0-9 +]{6,20}', title: 'Solo números', placeholder: '987 654 321' })}
           className={campo}
