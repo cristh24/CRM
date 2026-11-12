@@ -1166,6 +1166,12 @@ isOneToOne: false
 "puede_programar_ausencia":
 { Args: { "p_asesor_id": string }; Returns: boolean
                            },
+"formularios_resumen":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
+"formulario_detalle":
+{ Args: { "p_clave": string }; Returns: Json
+                           },
 "qr_asesor_publico":
 { Args: { "p_codigo": string }; Returns: Json
                            },

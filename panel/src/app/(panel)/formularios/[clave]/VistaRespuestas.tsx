@@ -15,8 +15,10 @@ const PERIODOS = { todo: 'Todo', '7': 'Últimos 7 días', '30': 'Últimos 30 dí
 const sinTildes = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 const Vacio = () => <span className="text-slate-400">—</span>
 
-export function VistaRespuestas({ clave, puedeMarcar, titulo, preguntas, envios }: {
+export function VistaRespuestas({ clave, puedeMarcar, miId, titulo, preguntas, envios }: {
   clave: string
+  /** null: abre cualquier lead; si no, solo los leads de este asesor */
+  miId: string | null
   /** Super admin o administrador: marca y quita el "Descuento aplicado"; los demás solo lo ven */
   puedeMarcar: boolean
   titulo: string; preguntas: PreguntaVista[]; envios: Envio[]
@@ -95,7 +97,7 @@ export function VistaRespuestas({ clave, puedeMarcar, titulo, preguntas, envios 
           <div className="tarjeta border-t-8 border-t-marca-700 p-5">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <p className="text-lg font-semibold">{actual.nombre}</p>
-              <Link href={`/leads/${actual.leadId}`} className="text-sm font-medium text-marca-700 hover:underline">Abrir lead →</Link>
+              {(!miId || actual.asesorId === miId) && <Link href={`/leads/${actual.leadId}`} className="text-sm font-medium text-marca-700 hover:underline">Abrir lead →</Link>}
             </div>
             <p className="text-xs text-slate-500">Enviado: {fechaHora(actual.fecha)}{actual.asesor ? ` · Asesor: ${actual.asesor}` : ''}</p>
             <div className="mt-3"><CheckDescuento key={actual.leadId} clave={clave} envio={actual} puedeMarcar={puedeMarcar} conTexto /></div>
@@ -122,7 +124,9 @@ export function VistaRespuestas({ clave, puedeMarcar, titulo, preguntas, envios 
               {filtrados.map((e) => (
                 <tr key={e.leadId} className="align-top hover:bg-slate-50">
                   <td className="px-4 py-2.5">
-                    <Link href={`/leads/${e.leadId}`} className="font-medium text-marca-700 hover:underline">{e.nombre}</Link>
+                    {!miId || e.asesorId === miId
+                      ? <Link href={`/leads/${e.leadId}`} className="font-medium text-marca-700 hover:underline">{e.nombre}</Link>
+                      : <span className="font-medium">{e.nombre}</span>}
                     {e.asesor && <p className="text-xs text-slate-500">{e.asesor}</p>}
                   </td>
                   {preguntas.filter((p) => p.id !== 'nombre').map((p) => (

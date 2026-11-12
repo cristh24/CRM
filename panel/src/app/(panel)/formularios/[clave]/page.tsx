@@ -20,7 +20,11 @@ export default async function RespuestasFormulario(props: PageProps<'/formulario
         <h1 className="mt-1 text-2xl font-semibold">{f.titulo}</h1>
         {f.detalle && <p className="text-sm text-slate-500">{f.detalle}</p>}
       </div>
-      <VistaRespuestas clave={f.clave} puedeMarcar={puedeMarcarDescuento(sesion)} titulo={f.titulo} preguntas={f.preguntas} envios={f.envios} />
+      <VistaRespuestas
+        clave={f.clave} puedeMarcar={puedeMarcarDescuento(sesion)}
+        // Ve las respuestas de todos, pero solo abre los leads que puede ver (los suyos, o todos si ve todo el equipo)
+        miId={sesion.esAdmin || sesion.superadmin ? null : sesion.perfil.id}
+        titulo={f.titulo} preguntas={f.preguntas} envios={f.envios} />
     </div>
   )
 }

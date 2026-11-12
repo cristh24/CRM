@@ -1,4 +1,6 @@
 // Respuestas de los formularios de registro (Actividades y QR del asesor), para verlas como en un cuestionario.
+// Todos los usuarios del panel ven las respuestas de todos, pero solo de estos formularios: las traen
+// formularios_resumen() y formulario_detalle() (base de datos), sin abrir el resto de los leads.
 // No hay una copia aparte de cada envío: se arman con los datos actuales del lead, las respuestas a las
 // preguntas propias (actividad_respuestas) y la nota "Llenó el formulario del QR de …" de su conversación.
 import 'server-only'
@@ -11,6 +13,8 @@ import { UBIGEOS } from '@/lib/ubigeos-servidor'
 export interface PreguntaVista { id: string; texto: string; resumen: 'barras' | 'lista'; varias?: boolean }
 export interface Envio {
   leadId: string; nombre: string; telefono: string; asesor: string; fecha: string; valores: Record<string, string>
+  /** Asesor del lead: solo él (o quien ve todo el equipo) puede abrir el lead */
+  asesorId: string | null
   /** Check "Descuento aplicado": quién lo marcó y cuándo */
   descuento?: { por: string; fecha: string } | null
 }
@@ -19,26 +23,16 @@ export interface ResumenFormulario {
   clave: string; nombre: string; tipo: 'actividad' | 'qr'; detalle: string; envios: number; ultimo: string | null; activa: boolean
 }
 
-const QR = 'Llenó el formulario del QR de '
-const ENLACE = 'Llenó el formulario del enlace de '
-
-/** "Llenó el formulario del QR de Ana Pérez (atención presencial)" → { asesor: 'Ana Pérez', via: 'QR presencial' } */
-function leerNota(contenido: string): { asesor: string; via: string } | null {
-  const via = contenido.startsWith(QR) ? 'QR presencial' : contenido.startsWith(ENLACE) ? 'Enlace por WhatsApp' : null
-  if (!via) return null
-  const resto = contenido.slice((via === 'QR presencial' ? QR : ENLACE).length)
-  const asesor = resto.split(/ \(|:/)[0]!.trim()
-  return asesor ? { asesor, via } : null
+/** Una fila de formulario_detalle() */
+interface Fila {
+  lead_id: string; nombre: string | null; telefono: string | null; dni: string | null; carrera_interes: string | null
+  grado: string | null; colegio: string | null; ubigeo: string | null; sede: string | null
+  asesor_id: string | null; asesor: string | null; fecha: string; via: string | null
+  respuestas: { id: string; pregunta: string; respuesta: string }[] | null
+  descuento_por: string | null; descuento_at: string | null
 }
 
-const LEAD = 'id, nombre, telefono, dni, carrera_interes, grado, colegio, ubigeo, sede, created_at, ultimo_registro_at, asesor:asesores!leads_asesor_id_fkey(nombre)'
-interface Lead {
-  id: string; nombre: string | null; telefono: string | null; dni: string | null; carrera_interes: string | null; grado: string | null
-  colegio: string | null; ubigeo: string | null; sede: string | null; created_at: string; ultimo_registro_at: string | null
-  asesor: { nombre: string } | null
-}
-
-function datosDelLead(l: Lead): Record<string, string> {
+function datosDelLead(l: Fila): Record<string, string> {
   return {
     nombre: l.nombre ?? '',
     celular: l.telefono ?? '',
@@ -59,82 +53,46 @@ const ETIQUETAS: Record<CampoFormulario, [corta: string, inscripcion: string]> =
   procedencia: ['¿De dónde eres?', 'Domicilio'],
 }
 
-/** Lista de formularios con cuántos lo llenaron (el RLS deja ver solo los leads del usuario). */
+/** Lista de formularios (todas las actividades y el QR de cada asesor que tenga respuestas). */
 export async function listarFormularios(): Promise<ResumenFormulario[]> {
   const supabase = await crearClienteServidor()
-  const [{ data: actividades }, { data: leads }, { data: respuestas }, { data: notas }, { data: asesores }] = await Promise.all([
-    supabase.from('actividades').select('id, nombre, tipo, lugar, fecha, activa').order('id', { ascending: false }),
-    supabase.from('leads').select('id, actividad_id, ultimo_registro_at, created_at').not('actividad_id', 'is', null).limit(20000),
-    supabase.from('actividad_respuestas').select('actividad_id, lead_id, updated_at').limit(20000),
-    supabase.from('lead_interacciones').select('lead_id, contenido, created_at')
-      .eq('tipo', 'sistema').like('contenido', 'Llenó el formulario del %').order('created_at', { ascending: false }).limit(20000),
+  const [{ data: actividades }, { data: resumen }, { data: asesores }] = await Promise.all([
+    supabase.from('actividades').select('id, nombre, lugar, fecha, activa').order('id', { ascending: false }),
+    supabase.rpc('formularios_resumen'),
     supabase.from('asesores').select('id, nombre, activo'),
   ])
+  const porClave = new Map(((resumen ?? []) as { clave: string; envios: number; ultimo: string }[]).map((r) => [r.clave, r]))
 
-  // Actividades: los leads registrados con su QR y los que respondieron sus preguntas
-  const porActividad = new Map<number, Map<string, string>>()
-  const sumar = (id: number, lead: string, fecha: string) => {
-    const m = porActividad.get(id) ?? new Map<string, string>()
-    if (!m.has(lead) || m.get(lead)! < fecha) m.set(lead, fecha)
-    porActividad.set(id, m)
-  }
-  for (const l of leads ?? []) sumar(l.actividad_id!, l.id, l.ultimo_registro_at ?? l.created_at)
-  for (const r of respuestas ?? []) sumar(r.actividad_id, r.lead_id, r.updated_at)
-
-  const lista: ResumenFormulario[] = (actividades ?? []).map((a) => {
-    const m = porActividad.get(a.id)
-    return {
-      clave: `a-${a.id}`,
-      nombre: a.nombre,
-      tipo: 'actividad',
-      detalle: [a.lugar, a.fecha?.split('-').reverse().join('/')].filter(Boolean).join(' · ') || 'Actividad',
-      envios: m?.size ?? 0,
-      ultimo: m?.size ? [...m.values()].sort().at(-1)! : null,
-      activa: a.activa,
-    }
-  })
-
-  // QR presencial / enlace de cada asesor
-  const idPorNombre = new Map((asesores ?? []).map((a) => [a.nombre.trim(), a]))
-  const porAsesor = new Map<string, { nombre: string; activo: boolean; leads: Set<string>; ultimo: string }>()
-  for (const n of notas ?? []) {
-    const nota = leerNota(n.contenido ?? '')
-    const asesor = nota && idPorNombre.get(nota.asesor)
-    if (!asesor) continue
-    const g = porAsesor.get(asesor.id) ?? { nombre: asesor.nombre, activo: asesor.activo, leads: new Set<string>(), ultimo: n.created_at }
-    g.leads.add(n.lead_id)
-    if (n.created_at > g.ultimo) g.ultimo = n.created_at
-    porAsesor.set(asesor.id, g)
-  }
-  for (const [id, g] of porAsesor) {
-    lista.push({ clave: `q-${id}`, nombre: `QR de ${g.nombre}`, tipo: 'qr', detalle: 'Atención presencial y enlace por WhatsApp', envios: g.leads.size, ultimo: g.ultimo, activa: g.activo })
+  const lista: ResumenFormulario[] = (actividades ?? []).map((a) => ({
+    clave: `a-${a.id}`,
+    nombre: a.nombre,
+    tipo: 'actividad',
+    detalle: [a.lugar, a.fecha?.split('-').reverse().join('/')].filter(Boolean).join(' · ') || 'Actividad',
+    envios: porClave.get(`a-${a.id}`)?.envios ?? 0,
+    ultimo: porClave.get(`a-${a.id}`)?.ultimo ?? null,
+    activa: a.activa,
+  }))
+  for (const a of asesores ?? []) {
+    const r = porClave.get(`q-${a.id}`)
+    if (r) lista.push({ clave: `q-${a.id}`, nombre: `QR de ${a.nombre}`, tipo: 'qr', detalle: 'Atención presencial y enlace por WhatsApp', envios: r.envios, ultimo: r.ultimo, activa: a.activo })
   }
   return lista.sort((x, y) => (y.ultimo ?? '').localeCompare(x.ultimo ?? ''))
 }
 
 /** Preguntas y respuestas de un formulario: "a-<id>" (actividad) o "q-<id del asesor>" (su QR). */
 export async function cargarFormulario(clave: string): Promise<FormularioVista | null> {
+  if (!/^(a-\d+|q-[0-9a-f-]{36})$/i.test(clave)) return null
   const supabase = await crearClienteServidor()
-  const [f, { data: descuentos }] = await Promise.all([
-    leerRespuestas(clave),
-    supabase.from('formulario_descuentos')
-      .select('lead_id, created_at, marcado:asesores!formulario_descuentos_marcado_por_fkey(nombre)').eq('clave', clave).limit(5000),
-  ])
-  if (!f) return null
-  const porLead = new Map((descuentos ?? []).map((d) => [d.lead_id, { por: d.marcado?.nombre ?? '', fecha: d.created_at }]))
-  return { ...f, clave, envios: f.envios.map((e) => ({ ...e, descuento: porLead.get(e.leadId) ?? null })) }
-}
+  const { data } = await supabase.rpc('formulario_detalle', { p_clave: clave })
+  const filas = (data ?? []) as unknown as Fila[]
+  const envio = (f: Fila, valores: Record<string, string>): Envio => ({
+    leadId: f.lead_id, nombre: f.nombre ?? '—', telefono: f.telefono ?? '', asesor: f.asesor ?? '', asesorId: f.asesor_id,
+    fecha: f.fecha, valores,
+    descuento: f.descuento_at ? { por: f.descuento_por ?? '', fecha: f.descuento_at } : null,
+  })
 
-async function leerRespuestas(clave: string): Promise<Omit<FormularioVista, 'clave'> | null> {
-  const supabase = await crearClienteServidor()
-
-  if (/^a-\d+$/.test(clave)) {
-    const id = Number(clave.slice(2))
-    const [{ data: act }, { data: respuestas }, { data: leads }] = await Promise.all([
-      supabase.from('actividades').select('id, nombre, lugar, fecha, formulario').eq('id', id).maybeSingle(),
-      supabase.from('actividad_respuestas').select('lead_id, respuestas, updated_at').eq('actividad_id', id).limit(5000),
-      supabase.from('leads').select('id').eq('actividad_id', id).limit(5000),
-    ])
+  if (clave.startsWith('a-')) {
+    const { data: act } = await supabase.from('actividades').select('id, nombre, lugar, fecha, formulario').eq('id', Number(clave.slice(2))).maybeSingle()
     if (!act) return null
     const f = leerFormulario(act.formulario)
     const ins = f.tipo === 'inscripcion'
@@ -164,78 +122,41 @@ async function leerRespuestas(clave: string): Promise<Omit<FormularioVista, 'cla
     ]
     for (const p of f.preguntas) if (!preguntas.some((q) => q.id === p.id)) preguntas.push(propia(p))
 
-    // Respuestas a las preguntas propias (y las de preguntas que ya se quitaron del formulario)
-    const propias = new Map<string, { valores: Record<string, string>; fecha: string }>()
-    for (const r of respuestas ?? []) {
-      const valores: Record<string, string> = {}
-      for (const x of (r.respuestas ?? []) as unknown as { id: string; pregunta: string; respuesta: string }[]) {
+    const envios = filas.map((fila) => {
+      // Respuestas a las preguntas propias (y las de preguntas que ya se quitaron del formulario)
+      const valores = datosDelLead(fila)
+      for (const x of fila.respuestas ?? []) {
         // Fechas guardadas antes con el calendario ("2009-11-10"): se muestran como día/mes/año
         valores[x.id] = /^\d{4}-\d{2}-\d{2}$/.test(x.respuesta) ? x.respuesta.split('-').reverse().join('/') : x.respuesta
         if (!preguntas.some((q) => q.id === x.id)) preguntas.push({ id: x.id, texto: `${x.pregunta} (ya no está en el formulario)`, resumen: 'lista' })
       }
-      propias.set(r.lead_id, { valores, fecha: r.updated_at })
-    }
-    const ids = [...new Set([...(leads ?? []).map((l) => l.id), ...propias.keys()])]
-    const datos = await leadsPorId(ids)
-    const envios: Envio[] = ids.flatMap((leadId) => {
-      const l = datos.get(leadId)
-      if (!l) return []
-      return [{
-        leadId, nombre: l.nombre ?? '—', telefono: l.telefono ?? '', asesor: l.asesor?.nombre ?? '',
-        fecha: propias.get(leadId)?.fecha ?? l.ultimo_registro_at ?? l.created_at,
-        valores: { ...datosDelLead(l), ...propias.get(leadId)?.valores },
-      }]
+      return envio(fila, valores)
     })
     return {
+      clave,
       titulo: act.nombre,
       detalle: [act.lugar, act.fecha?.split('-').reverse().join('/')].filter(Boolean).join(' · '),
       preguntas,
-      envios: envios.sort((x, y) => y.fecha.localeCompare(x.fecha)),
-    }
-  }
-
-  if (/^q-[0-9a-f-]{36}$/i.test(clave)) {
-    const { data: asesor } = await supabase.from('asesores').select('id, nombre').eq('id', clave.slice(2)).maybeSingle()
-    if (!asesor) return null
-    const { data: notas } = await supabase.from('lead_interacciones').select('lead_id, contenido, created_at')
-      .eq('tipo', 'sistema').like('contenido', 'Llenó el formulario del %')
-      .order('created_at', { ascending: false }).limit(5000)
-    // Una fila por alumno: la última vez que llenó el formulario
-    const ultima = new Map<string, { fecha: string; via: string }>()
-    for (const n of notas ?? []) {
-      const nota = leerNota(n.contenido ?? '')
-      if (nota?.asesor === asesor.nombre.trim() && !ultima.has(n.lead_id)) ultima.set(n.lead_id, { fecha: n.created_at, via: nota.via })
-    }
-    const datos = await leadsPorId([...ultima.keys()])
-    const envios: Envio[] = [...ultima].flatMap(([leadId, u]) => {
-      const l = datos.get(leadId)
-      if (!l) return []
-      return [{ leadId, nombre: l.nombre ?? '—', telefono: l.telefono ?? '', asesor: l.asesor?.nombre ?? '', fecha: u.fecha, valores: { ...datosDelLead(l), via: u.via } }]
-    })
-    return {
-      titulo: `QR de ${asesor.nombre}`,
-      detalle: 'Formulario de atención presencial (y su enlace por WhatsApp)',
-      preguntas: [
-        { id: 'via', texto: '¿Por dónde llenó el formulario?', resumen: 'barras' },
-        { id: 'nombre', texto: 'Nombres y apellidos', resumen: 'lista' },
-        { id: 'celular', texto: 'Celular (WhatsApp)', resumen: 'lista' },
-        { id: 'carrera', texto: 'Carrera que le interesa', resumen: 'barras' },
-        { id: 'dni', texto: 'DNI', resumen: 'lista' },
-        { id: 'grado', texto: 'Grado', resumen: 'barras' },
-        { id: 'colegio', texto: 'Colegio', resumen: 'barras' },
-        { id: 'procedencia', texto: '¿De dónde eres?', resumen: 'barras' },
-      ],
       envios,
     }
   }
-  return null
-}
 
-/** Datos actuales de los leads (en partes: la URL de la consulta tiene un límite). */
-async function leadsPorId(ids: string[]): Promise<Map<string, Lead>> {
-  const supabase = await crearClienteServidor()
-  const partes: string[][] = []
-  for (let i = 0; i < ids.length; i += 150) partes.push(ids.slice(i, i + 150))
-  const resultados = await Promise.all(partes.map((p) => supabase.from('leads').select(LEAD).in('id', p).is('eliminado_at', null)))
-  return new Map(resultados.flatMap((r) => ((r.data ?? []) as unknown as Lead[]).map((l) => [l.id, l] as const)))
+  const { data: asesor } = await supabase.from('asesores').select('id, nombre').eq('id', clave.slice(2)).maybeSingle()
+  if (!asesor) return null
+  return {
+    clave,
+    titulo: `QR de ${asesor.nombre}`,
+    detalle: 'Formulario de atención presencial (y su enlace por WhatsApp)',
+    preguntas: [
+      { id: 'via', texto: '¿Por dónde llenó el formulario?', resumen: 'barras' },
+      { id: 'nombre', texto: 'Nombres y apellidos', resumen: 'lista' },
+      { id: 'celular', texto: 'Celular (WhatsApp)', resumen: 'lista' },
+      { id: 'carrera', texto: 'Carrera que le interesa', resumen: 'barras' },
+      { id: 'dni', texto: 'DNI', resumen: 'lista' },
+      { id: 'grado', texto: 'Grado', resumen: 'barras' },
+      { id: 'colegio', texto: 'Colegio', resumen: 'barras' },
+      { id: 'procedencia', texto: '¿De dónde eres?', resumen: 'barras' },
+    ],
+    envios: filas.map((fila) => envio(fila, { ...datosDelLead(fila), via: fila.via ?? '' })),
+  }
 }
