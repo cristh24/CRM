@@ -72,7 +72,8 @@ export const PLANTILLAS: Record<keyof typeof TIPOS_FORMULARIO, FormularioActivid
     tipo: 'inscripcion',
     campos: { dni: 'obligatorio', carrera: 'obligatorio', grado: 'oculto', colegio: 'obligatorio', procedencia: 'obligatorio' },
     preguntas: [
-      // Datos personales
+      // Datos personales (la fecha de nacimiento, justo después del DNI)
+      { id: 'p24', texto: 'Fecha de nacimiento', tipo: 'fecha', obligatoria: true, junto: 'dni' },
       { id: 'p13', texto: 'Estado civil', tipo: 'opcion', opciones: ['Soltero(a)', 'Casado(a)', 'Conviviente', 'Divorciado(a)', 'Viudo(a)'], obligatoria: true, junto: 'dni' },
       { id: 'p14', texto: 'Nacionalidad', tipo: 'opcion', opciones: ['Perú', 'Bolivia', 'Chile', 'Argentina', 'Brasil', 'Colombia', 'Ecuador', 'Venezuela', 'Otro país'], obligatoria: true, junto: 'dni' },
       { id: 'p6', texto: 'Afiliación religiosa', tipo: 'opcion', opciones: ['Adventista', 'Católico', 'Evangélico', 'Otra', 'Ninguna'], obligatoria: true, junto: 'dni' },
