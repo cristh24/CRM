@@ -7,6 +7,7 @@ import { useConfirmar } from '@/components/Confirmacion'
 import { cambiarActiva, duplicarActividad, eliminarActividad, guardarActividad, guardarWhatsappGenesys, type Resultado } from './acciones'
 import { EditorFormulario } from './EditorFormulario'
 import { leerFormulario } from '@/lib/formulario-actividad'
+import { descargarFormatoPdf } from '@/lib/formato-pdf'
 
 export interface Actividad {
   id: number
@@ -169,6 +170,14 @@ export function TarjetaActividad({ actividad, base, asesores }: { actividad: Act
           <div className="flex flex-wrap items-center gap-2">
             <button onClick={descargar} className="boton">⬇ Descargar QR</button>
             <Link href={`/actividades/${actividad.id}/cartel`} target="_blank" className="boton-secundario">🖨 Cartel para imprimir</Link>
+            <button
+              className="boton-secundario"
+              onClick={async () => {
+                try { await descargarFormatoPdf(actividad, leerFormulario(actividad.formulario)) } catch { setR({ error: 'No se pudo generar el PDF. Intenta de nuevo.' }) }
+              }}
+            >
+              📄 Formato PDF
+            </button>
             <button
               className="boton-secundario"
               onClick={async () => { try { await navigator.clipboard.writeText(url); setR({ ok: 'Enlace copiado.' }) } catch { setR({ error: url }) } }}

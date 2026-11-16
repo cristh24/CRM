@@ -102,3 +102,41 @@ export const PLANTILLAS: Record<keyof typeof TIPOS_FORMULARIO, FormularioActivid
     ],
   },
 }
+
+/** Un elemento del formulario en el orden en que lo ve el alumno: título de sección, dato fijo o pregunta propia. */
+export type ElementoFormulario =
+  | { tipo: 'seccion'; titulo: string }
+  | { tipo: 'dato'; clave: 'sede' | 'nombre' | 'celular' | CampoFormulario; obligatorio: boolean }
+  | { tipo: 'pregunta'; p: PreguntaActividad }
+
+/**
+ * Orden del formulario del QR (igual que app/r/[codigo]/Formulario.tsx): en la inscripción, sede y secciones de la
+ * ficha (datos personales, domicilio, admisión, centro de estudios); en el básico, lo más rápido de llenar primero.
+ */
+export function ordenFormulario(f: FormularioActividad): ElementoFormulario[] {
+  const ins = f.tipo === 'inscripcion'
+  const pide = (c: CampoFormulario) => modoDe(f, c) !== 'oculto'
+  const dato = (clave: CampoFormulario): ElementoFormulario => ({ tipo: 'dato', clave, obligatorio: modoDe(f, clave) === 'obligatorio' })
+  const preg = (lista: PreguntaActividad[]) => lista.map((p): ElementoFormulario => ({ tipo: 'pregunta', p }))
+  const antes = (c: CampoFormulario) => (pide(c) ? preg(f.preguntas.filter((p) => p.antes === c && !p.junto)) : [])
+  const junto = (c: CampoFormulario) => (pide(c) ? preg(f.preguntas.filter((p) => p.junto === c)) : [])
+  const seccion = (titulo: string): ElementoFormulario[] => (ins ? [{ tipo: 'seccion', titulo }] : [])
+  const bloques: Record<'carrera' | 'dni' | 'colegio' | 'procedencia', ElementoFormulario[]> = {
+    carrera: pide('carrera') ? [...seccion('Datos de admisión'), ...antes('carrera'), dato('carrera'), ...junto('carrera')] : [],
+    dni: pide('dni') || pide('grado')
+      ? [...antes('dni'), ...antes('grado'), ...(pide('dni') ? [dato('dni')] : []), ...(pide('grado') ? [dato('grado')] : []), ...junto('dni'), ...junto('grado')]
+      : [],
+    colegio: pide('colegio') ? [...seccion('Centro de estudios de procedencia'), ...antes('colegio'), dato('colegio'), ...junto('colegio')] : [],
+    procedencia: pide('procedencia') ? [...seccion('Dirección de domicilio'), ...antes('procedencia'), dato('procedencia'), ...junto('procedencia')] : [],
+  }
+  const orden = ins ? (['dni', 'procedencia', 'carrera', 'colegio'] as const) : (['carrera', 'dni', 'colegio', 'procedencia'] as const)
+  const ubicada = (p: PreguntaActividad) => (p.junto && pide(p.junto)) || (!p.junto && p.antes && pide(p.antes))
+  return [
+    ...(ins ? [{ tipo: 'dato', clave: 'sede', obligatorio: true } as const] : []),
+    ...seccion('Datos personales'),
+    { tipo: 'dato', clave: 'nombre', obligatorio: true },
+    { tipo: 'dato', clave: 'celular', obligatorio: true },
+    ...orden.flatMap((c) => bloques[c]),
+    ...preg(f.preguntas.filter((p) => !ubicada(p))),
+  ]
+}
