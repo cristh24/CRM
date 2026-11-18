@@ -142,9 +142,15 @@ export async function avisarFueraDeHorario(lead: Lead, telefono: string) {
     `¡Gracias por escribirnos${primerNombre ? ', ' + primerNombre : ''}! 😊 Nuestro horario de atención es ${HORARIO_ATENCION_TEXTO}`,
     `Un asesor(a) de Admisión te responderá ${textoProximaAtencion(new Date(apertura))}.`,
   ].join('\n')
+  // Primero queda en el chat: el eco del webhook (llega casi al mismo tiempo) lo encuentra y no lo guarda otra vez.
+  // Si el envío falla, se quita del chat.
+  const { data: guardado } = await supabase.from('lead_interacciones')
+    .insert({ lead_id: lead.id, tipo: 'respuesta_bot', contenido: texto.slice(0, 4000) }).select('id').single()
   const envio = await enviarWhatsApp(await destinoWhatsApp(supabase, telefono), texto)
-  if (envio.ok) await guardarEnChat(lead.id, texto)
-  else console.error('[genesys] No se pudo enviar el aviso de horario:', envio.error)
+  if (!envio.ok) {
+    console.error('[genesys] No se pudo enviar el aviso de horario:', envio.error)
+    if (guardado) await supabase.from('lead_interacciones').delete().eq('id', guardado.id)
+  }
 }
 
 /** Saludo de Genesys al alumno que se registró con el QR de una feria o visita a colegio. */

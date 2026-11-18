@@ -224,6 +224,12 @@ export async function evento(cuerpo: Cuerpo, registroId: number | null): Promise
       await marcar(unido ? 'saliente del asesor: id de WhatsApp guardado' : 'saliente del asesor (sin mensaje para unir)')
       return { ok: true, procesado: 'saliente asesor' }
     }
+    // Archivo que un asesor envió desde el CRM: su leyenda es solo la firma ("*Nombre*") y ya está en el chat
+    // como "📄 Documento" o "🖼️ Imagen": no es una respuesta del bot
+    if (texto && /^\*[^*\n:]{1,40}\*$/.test(texto.trim())) {
+      await marcar('saliente del asesor (archivo, ya en el chat)')
+      return { ok: true, procesado: 'saliente asesor' }
+    }
     // Eco de un envío del CRM a "<id>@lid": ya está guardado en el chat
     if (destinoJid.endsWith('@lid')) {
       await marcar('saliente @lid (envío del CRM)')
